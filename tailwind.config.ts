@@ -12,6 +12,7 @@ const config: Config = {
         "bg-primary": "#21212d",
         "bg-secondary": "#2c2c38",
         "button": "#645fc6",
+        "border": "#636466",
       }
     },
   },

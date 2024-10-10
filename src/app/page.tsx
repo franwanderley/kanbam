@@ -1,15 +1,22 @@
+'use client'
+
 import { SideBar } from "@/components/SideBar";
 import { Card } from "@/components/Card";
-import Image from "next/image";
+import { FormTask } from "@/components/FormTask";
+import { useState } from "react";
 
 export default function Home() {
+  const [isOpenModal, setIsOpenModal] = useState<0 | 1>(0);
   return (
     <div className="flex min-h-screen flex-row bg-bg-primary divide-x">
+      {isOpenModal ? <FormTask onClose={() => setIsOpenModal(0)} /> : ''}
       <SideBar />
       <main className="w-full flex flex-col">
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
           <h2 className="text-2xl">Platform Launch</h2>
-          <button className="cursor-pointer text-xs bg-button p-2 rounded-2xl">+ Add New Task</button>
+          <button onClick={() => setIsOpenModal(1)} className="cursor-pointer text-xs bg-button p-2 rounded-2xl">
+            + Add New Task
+          </button>
         </header>
         <div className="p-4 flex flex-row">
           <div className="flex flex-col justify-center mr-6">
@@ -37,7 +44,7 @@ export default function Home() {
             <Card />
           </div>
           <div className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer">
-            <span className="">+ New Column</span>
+            <span className="text-center">+ New Column</span>
           </div>
         </div>
       </main>
