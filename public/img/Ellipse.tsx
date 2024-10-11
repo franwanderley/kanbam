@@ -5,7 +5,7 @@ export const Ellipse = () => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="size-2"
+    className="size-1"
   >
     <path
       strokeLinecap="round"
