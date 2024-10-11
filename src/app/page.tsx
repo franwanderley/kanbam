@@ -5,6 +5,7 @@ import { Card } from "@/components/Card";
 import { FormTask } from "@/components/FormTask";
 import { useState } from "react";
 import { ViewCard } from "@/components/ViewCard";
+import { FormColumn } from "@/components/FormColumn";
 
 export default function Home() {
   const [whatFormIs, setWhatFormIs] = useState<'FormTask' | 'ViewCard' | 'FormColumn' | null>();
@@ -12,6 +13,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-row bg-bg-primary divide-x">
       {whatFormIs === 'FormTask' ? <FormTask onClose={() => setWhatFormIs(null)} /> : ''}
       {whatFormIs === 'ViewCard' ? <ViewCard onClose={() => setWhatFormIs(null)} /> : ''}
+      {whatFormIs === 'FormColumn' ? <FormColumn onClose={() => setWhatFormIs(null)} /> : ''}
 
       <SideBar />
       <main className="w-full flex flex-col">
@@ -46,7 +48,10 @@ export default function Home() {
             <Card onOpen={() => setWhatFormIs('ViewCard')} />
             <Card onOpen={() => setWhatFormIs('ViewCard')} />
           </div>
-          <div className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer">
+          <div
+            onClick={() => setWhatFormIs('FormColumn')} 
+            className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer"
+          >
             <span className="text-center">+ New Column</span>
           </div>
         </div>
