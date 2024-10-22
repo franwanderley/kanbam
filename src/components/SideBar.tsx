@@ -2,8 +2,14 @@ import { useState } from 'react';
 import { Hide } from '../../public/img/Hide';
 import kanbam from '../../public/img/kanbam.png';
 import { ViewFinder } from '../../public/img/ViewFinder';
+import { Board } from '@/interface/Board';
 
-export const SideBar = () => {
+interface SideBarProps {
+   boards: Board[] | undefined;
+   setBoardSelected?: (board: Board) => {};
+}
+
+export const SideBar = ({ boards }: SideBarProps) => {
    const [isOpenSideBar, setIsOpenSideBar] = useState<0 | 1>(1);
    if (!isOpenSideBar) {
       return '';
@@ -15,11 +21,13 @@ export const SideBar = () => {
             <h1 className="text-2xl">Kanbam</h1>
          </div>
          <div>
-            <p className="text-xs text-gray-400 mb-4">ALL BOARDS (8)</p>
-            <div className="flex flex-row items-center mb-4">
-               <ViewFinder width="20px" height="15px" />
-               <p className="text-xs font-normal ml-1">Platform Launcher</p>
-            </div>
+            <p className="text-xs text-gray-400 mb-4">ALL BOARDS ({boards?.length})</p>
+               {boards?.map(board => (
+                  <div key={board?.id} className="flex flex-row items-center mb-4">
+                     <ViewFinder width="20px" height="15px" />
+                     <p className="text-xs font-normal ml-1">{board?.title}</p>
+                  </div>
+               ))}
             <div className="flex flex-row items-center text-button">
                <ViewFinder width="20px" height="15px" />
                <p className="text-xs font-normal ml-1 text-button cursor-pointer">+ Create new Board</p>
