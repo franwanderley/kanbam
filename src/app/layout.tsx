@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SideBar } from "@/components/SideBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +15,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>{children}</body>
+      <body className={[inter.className, 'flex min-h-screen flex-row bg-bg-primary divide-x'].join(' ')}>
+        {getBoards().then(boards => (
+          <SideBar boards={boards} />
+        ))}
+        {children}
+      </body>
     </html>
   );
+}
+
+const getBoards = async () => {
+  const response = await fetch('http://localhost:3333/boards');
+  return await response.json();
 }
