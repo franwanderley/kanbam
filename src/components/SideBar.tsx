@@ -3,6 +3,7 @@ import { Hide } from '../../public/img/Hide';
 import kanbam from '../../public/img/kanbam.png';
 import { ViewFinder } from '../../public/img/ViewFinder';
 import { Board } from '@/interface/Board';
+import Link from 'next/link';
 
 interface SideBarProps {
    boards: Board[] | undefined;
@@ -10,10 +11,6 @@ interface SideBarProps {
 }
 
 export const SideBar = ({ boards }: SideBarProps) => {
-   const [isOpenSideBar, setIsOpenSideBar] = useState<0 | 1>(1);
-   if (!isOpenSideBar) {
-      return '';
-   }
    return (
       <div className="min-h-screen w-1/4 flex flex-col p-4 bg-bg-secondary">
          <div className="flex flex-row mb-6">
@@ -25,7 +22,7 @@ export const SideBar = ({ boards }: SideBarProps) => {
                {boards?.map(board => (
                   <div key={board?.id} className="flex flex-row items-center mb-4">
                      <ViewFinder width="20px" height="15px" />
-                     <p className="text-xs font-normal ml-1">{board?.title}</p>
+                     <Link href={`/${board?.title}`} className="text-xs font-normal ml-1">{board?.title}</Link>
                   </div>
                ))}
             <div className="flex flex-row items-center text-button">
@@ -33,7 +30,7 @@ export const SideBar = ({ boards }: SideBarProps) => {
                <p className="text-xs font-normal ml-1 text-button cursor-pointer">+ Create new Board</p>
             </div>
          </div>
-         <div onClick={_ => setIsOpenSideBar(0)} className="cursor-pointer flex flex-row fixed bottom-3 align-middle text-gray-400">
+         <div className="cursor-pointer flex flex-row fixed bottom-3 align-middle text-gray-400">
             <Hide width="20px" height="15px" />
             <span className="text-sm">Hide SideBar</span>
          </div>
