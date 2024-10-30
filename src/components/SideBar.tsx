@@ -1,4 +1,5 @@
-import { useState } from 'react';
+'use client'
+import { usePathname } from 'next/navigation';
 import { Hide } from '../../public/img/Hide';
 import kanbam from '../../public/img/kanbam.png';
 import { ViewFinder } from '../../public/img/ViewFinder';
@@ -11,6 +12,9 @@ interface SideBarProps {
 }
 
 export const SideBar = ({ boards }: SideBarProps) => {
+   const boardName = usePathname();
+   const forString = (boardTitle: string) => boardTitle.substring(1).split('%20').join(' ');
+
    return (
       <div className="min-h-screen w-1/4 flex flex-col p-4 bg-bg-secondary">
          <div className="flex flex-row mb-6">
@@ -22,7 +26,12 @@ export const SideBar = ({ boards }: SideBarProps) => {
                {boards?.map(board => (
                   <div key={board?.id} className="flex flex-row items-center mb-4">
                      <ViewFinder width="20px" height="15px" />
-                     <Link href={`/${board?.title}`} className="text-xs font-normal ml-1">{board?.title}</Link>
+                     <Link 
+                        href={`/${board?.title}`} 
+                        className={`text-xs font-${board?.title === forString(boardName) ? 'bold' : 'normal'} ml-1`}
+                     >
+                        {board?.title}
+                     </Link>
                   </div>
                ))}
             <div className="flex flex-row items-center text-button">

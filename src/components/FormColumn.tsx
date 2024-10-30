@@ -7,11 +7,6 @@ export const FormColumn = ({ onClose }: {onClose: () => void}) => {
             <form action="">
                <label htmlFor="title">Title</label>
                <input className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" type="text" name="" id="title" placeholder="Take coffree break" />
-               <label>Subtasks</label>
-               <input className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" type="text" name="" id="" placeholder="Make COfree" />
-               <button type="button" className="bg-white w-full cursor-pointer p-2 mt-3 mb-3 rounded-lg text-button">
-                  + add new subtask
-               </button>
                <label htmlFor="status">Order</label>
                <select className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" name="" id="status">
                   <option value="0">To Do</option>
