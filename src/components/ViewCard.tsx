@@ -1,12 +1,14 @@
 import { Task } from "@/interface/Task";
 import { Ellipse } from "../../public/img/Ellipse";
+import { Column } from "@/interface/Column";
 
 interface ViewCardProps {
    onClose: () => void;
    task: Task | undefined;
+   columns: Column[] | undefined;
 }
 
-export const ViewCard = ({ onClose, task } : ViewCardProps) => {
+export const ViewCard = ({ onClose, task, columns } : ViewCardProps) => {
    const howSubTaskIsFinish = () => task?.subtasks?.filter(sub => sub?.isFinish)?.length;
 
    return (
@@ -25,11 +27,11 @@ export const ViewCard = ({ onClose, task } : ViewCardProps) => {
                   <label htmlFor="subtask-1">{sub?.title}</label>
                </div>
             ))}
-            <label htmlFor="status" className="mt-3 mb-3">Status</label>
-            <select className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" name="" id="status">
-               <option value="0">To Do</option>
-               <option value="1">In Progress</option>
-               <option value="2">Done</option>
+            <label htmlFor="status" className="mt-3">Status</label>
+            <select value={task?.columnId} className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" name="" id="status">
+               {columns?.map(col => (
+                  <option key={col?.id} value={col?.id}>{col?.title}</option>
+               ))}
             </select>
          </div>
       </div>

@@ -1,6 +1,7 @@
+import { Column } from "@/interface/Column";
 
 
-export const FormTask = ({ onClose }: {onClose: () => void}) => {
+export const FormTask = ({ columns, onClose }: {columns?: Column[], onClose: () => void}) => {
 
    return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -18,10 +19,10 @@ export const FormTask = ({ onClose }: {onClose: () => void}) => {
                   + add new subtask
                </button>
                <label htmlFor="status">Status</label>
-               <select className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" name="" id="status">
-                  <option value="0">To Do</option>
-                  <option value="1">In Progress</option>
-                  <option value="2">Done</option>
+               <select className="p-2 w-full bg-transparent text-gray-400 border border-border mb-2" name="" id="status">
+                  {columns?.map(col => (
+                     <option key={col?.id} value={col?.id}>{col?.title}</option>
+                  ))}
                </select>
                <button className="bg-button w-full cursor-pointer p-2 mt-3 rounded-lg" type="submit">
                   Create Task

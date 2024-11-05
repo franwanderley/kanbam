@@ -1,4 +1,7 @@
-export const FormColumn = ({ onClose }: {onClose: () => void}) => {
+import { Column } from "@/interface/Column";
+
+export const FormColumn = ({ columns, onClose }: {columns?: Column[], onClose: () => void}) => {
+   const lastOrder = columns?.[columns?.length - 1]?.order || 0;
    return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
          <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
@@ -9,9 +12,10 @@ export const FormColumn = ({ onClose }: {onClose: () => void}) => {
                <input className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" type="text" name="" id="title" placeholder="Take coffree break" />
                <label htmlFor="status">Order</label>
                <select className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" name="" id="status">
-                  <option value="0">To Do</option>
-                  <option value="1">In Progress</option>
-                  <option value="2">Done</option>
+                  {columns?.map(col => (
+                     <option key={col.id} value={col.order}>{`before ${col.title}`}</option>
+                  ))}
+                  <option value={lastOrder + 1}>Last</option>
                </select>
                <button className="bg-button w-full cursor-pointer p-2 mt-3 rounded-lg" type="submit">
                   Create Column
