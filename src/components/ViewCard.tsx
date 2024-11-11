@@ -5,7 +5,7 @@ import { useState } from "react";
 import { SubTask } from "@/interface/SubTask";
 
 interface ViewCardProps {
-   onClose: (subtasks?: SubTask[], columnId?: number) => void;
+   onClose: (subtasks?: SubTask[], columnId?: string) => void;
    task: Task | undefined;
    columns: Column[] | undefined;
 }
@@ -42,7 +42,7 @@ export const ViewCard = ({ onClose, task, columns } : ViewCardProps) => {
                value={columnId} 
                className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" 
                id="status"
-               onChange={({target}) => setColumnId(Number(target?.value))}
+               onChange={({target}) => setColumnId(target?.value)}
             >
                {columns?.map(col => (
                   <option key={col?.id} value={col?.id}>{col?.title}</option>

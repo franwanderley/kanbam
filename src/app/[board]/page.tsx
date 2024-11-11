@@ -35,8 +35,11 @@ export default function BoardPage({ params }: { params: { board: string }}) {
     }
   };
 
-  const saveColumn = (data?: Column) => {
-
+  const saveColumn = async (data?: Column) => {
+    if (data && board) {
+      const body = {...board, columns: [...board.columns, data]};
+      await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
+    }
   };
 
   const handleFormClose = () => {
@@ -44,7 +47,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
     setCardDetail(undefined);
   };
 
-  const handleViewCardClose = async (subtasks?: SubTask[], columnId?: number) => {
+  const handleViewCardClose = async (subtasks?: SubTask[], columnId?: string) => {
     if (subtasks && columnId) {
       const tasks = board?.tasks?.map(task => task.id === cardDetail?.id ? {...task, subtasks, columnId} : task); 
       const data = {...board, tasks};
@@ -70,7 +73,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
     <div className="flex min-h-screen w-full flex-row bg-bg-primary">
       {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} saveTask={saveTask} onClose={handleFormClose} />}
       {whatFormIs === 'ViewCard' && <ViewCard columns={board?.columns} task={cardDetail} onClose={handleViewCardClose} />}
-      {whatFormIs === 'FormColumn' && <FormColumn columns={board?.columns} onClose={handleFormClose} />}
+      {whatFormIs === 'FormColumn' && <FormColumn columns={board?.columns} saveColumn={saveColumn} onClose={handleFormClose} />}
 
       <main className="w-full flex flex-col">
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
