@@ -1,5 +1,5 @@
 export interface SubTask {
-   id: number;
+   id?: number;
    title: string;
    isFinish: boolean;
 }

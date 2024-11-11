@@ -7,6 +7,8 @@ import { ViewCard } from "@/components/ViewCard";
 import { FormColumn } from "@/components/FormColumn";
 import { Task } from "@/interface/Task";
 import { Board } from "@/interface/Board";
+import { SubTask } from '@/interface/SubTask';
+import { Column } from '@/interface/Column';
 
 export default function BoardPage({ params }: { params: { board: string }}) {
   const [whatFormIs, setWhatFormIs] = useState<'FormTask' | 'ViewCard' | 'FormColumn'>();
@@ -26,9 +28,29 @@ export default function BoardPage({ params }: { params: { board: string }}) {
    getBoardByTitle();
   },[params]);
 
+  const saveTask = async (data?: Task) => {
+    if (data && board) {
+      const body = {...board, tasks: [...board.tasks, data]};
+      await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
+    }
+  };
+
+  const saveColumn = (data?: Column) => {
+
+  };
 
   const handleFormClose = () => {
     setWhatFormIs(undefined);
+    setCardDetail(undefined);
+  };
+
+  const handleViewCardClose = async (subtasks?: SubTask[], columnId?: number) => {
+    if (subtasks && columnId) {
+      const tasks = board?.tasks?.map(task => task.id === cardDetail?.id ? {...task, subtasks, columnId} : task); 
+      const data = {...board, tasks};
+      await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(data) });
+    }
+    handleFormClose();
   };
 
   const handleCardDetail = (card: Task) => {
@@ -46,8 +68,8 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   return (
     <div className="flex min-h-screen w-full flex-row bg-bg-primary">
-      {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} onClose={handleFormClose} />}
-      {whatFormIs === 'ViewCard' && <ViewCard columns={board?.columns} task={cardDetail} onClose={handleFormClose} />}
+      {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} saveTask={saveTask} onClose={handleFormClose} />}
+      {whatFormIs === 'ViewCard' && <ViewCard columns={board?.columns} task={cardDetail} onClose={handleViewCardClose} />}
       {whatFormIs === 'FormColumn' && <FormColumn columns={board?.columns} onClose={handleFormClose} />}
 
       <main className="w-full flex flex-col">

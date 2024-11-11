@@ -1,19 +1,22 @@
 import { Column } from "@/interface/Column";
 import { SubTask } from "@/interface/SubTask";
+import { Task } from "@/interface/Task";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-interface TaskInput {
-   title: string;
-   description: string;
-   columnId: number;
+interface FormTaskProp {
+   columns: Column[] | undefined;
+   onClose: () => void;
+   saveTask: (data: Task | undefined) => void;
 }
 
-export const FormTask = ({ columns, onClose }: {columns?: Column[], onClose: () => void}) => {
-   const { register, handleSubmit } = useForm<TaskInput>();
+export const FormTask = ({ columns, onClose, saveTask }: FormTaskProp) => {
+   const { register, handleSubmit } = useForm<Task>();
    const [subtasks, setSubtasks] = useState(['']);
-   const onSubmit = (data : TaskInput) => {
-      console.log(data, subtasks);
+   const onSubmit = (data : Task) => {
+      const filtedSubtasks = subtasks?.filter(sub => sub !== '');
+      saveTask({...data, subtasks: filtedSubtasks?.map(sub => ({title: sub, isFinish: false}))});
+      onClose();
    };
 
    return (
