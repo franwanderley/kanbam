@@ -11,7 +11,10 @@ interface FormColumnProps {
 export const FormColumn = ({ columns, onClose, saveColumn }: FormColumnProps) => {
    const { register, handleSubmit } = useForm<Column>();
    const lastOrder = columns?.[columns?.length - 1]?.order || 0;
-   const onSubmit = (data: Column) => saveColumn({...data, id: String(columns ? columns?.length + 1 : 1)});
+   const onSubmit = (data: Column) => {
+      saveColumn({...data, id: String(columns ? columns?.length + 1 : 1)});
+      onClose();
+   };
 
    return (
       <div className="fixed inset-0 flex items-center justify-center z-50">

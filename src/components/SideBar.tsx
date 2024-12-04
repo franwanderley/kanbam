@@ -5,6 +5,8 @@ import kanbam from '../../public/img/kanbam.png';
 import { ViewFinder } from '../../public/img/ViewFinder';
 import { Board } from '@/interface/Board';
 import Link from 'next/link';
+import { useState } from 'react';
+import { FormBoard } from './FormBoard';
 
 interface SideBarProps {
    boards: Board[] | undefined;
@@ -12,11 +14,13 @@ interface SideBarProps {
 }
 
 export const SideBar = ({ boards }: SideBarProps) => {
+   const [openModal, setOpenModal] = useState<boolean>();
    const boardName = usePathname();
-   const forString = (boardTitle: string) => boardTitle.substring(1).split('%20').join(' ');
+   const forString = () => boardName && boardName.substring(1).split('%20').join(' ');
 
    return (
       <div className="min-h-screen w-1/4 flex flex-col p-4 bg-bg-secondary">
+         {openModal && <FormBoard onClose={() => setOpenModal(false)} />}
          <div className="flex flex-row mb-6">
             <img className="w-6 mr-2" src={kanbam.src} alt="logo do kanbam" />
             <h1 className="text-2xl">Kanbam</h1>
@@ -28,7 +32,7 @@ export const SideBar = ({ boards }: SideBarProps) => {
                      <ViewFinder width="20px" height="15px" />
                      <Link 
                         href={`/${board?.title}`} 
-                        className={`text-xs font-${board?.title === forString(boardName) ? 'bold' : 'normal'} ml-1`}
+                        className={`text-xs font-${board?.title === forString() ? 'bold' : 'normal'} ml-1`}
                      >
                         {board?.title}
                      </Link>
@@ -36,7 +40,9 @@ export const SideBar = ({ boards }: SideBarProps) => {
                ))}
             <div className="flex flex-row items-center text-button">
                <ViewFinder width="20px" height="15px" />
-               <p className="text-xs font-normal ml-1 text-button cursor-pointer">+ Create new Board</p>
+               <p className="text-xs font-normal ml-1 text-button cursor-pointer" onClick={() => setOpenModal(true)}>
+                  + Create new Board
+               </p>
             </div>
          </div>
          <div className="cursor-pointer flex flex-row fixed bottom-3 align-middle text-gray-400">

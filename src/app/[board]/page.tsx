@@ -37,10 +37,28 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const saveColumn = async (data?: Column) => {
     if (data && board) {
-      const body = {...board, columns: [...board.columns, data]};
+      const columns = [...board.columns, data].sort((a, b) => a.order - b.order);
+      const body = {...board, columns: reOrderColumn(columns)};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
     }
   };
+
+  const reOrderColumn = (columns: Column[]) => {
+      const orderColumns: Column[] = [];
+      const recursColumn = (order: number) => {
+        const columnSameOrder = columns?.filter(col => col?.order === order);
+        if (columnSameOrder?.length) {
+          if (columnSameOrder.length > 1) {
+            orderColumns.push({...columnSameOrder?.[columnSameOrder?.length - 1], order: order + 1});    
+          } else {
+            orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
+          }
+          recursColumn(order + 1);
+        }
+      }
+      recursColumn(columns?.[0]?.order);
+      return orderColumns;
+  }
 
   const handleFormClose = () => {
     setWhatFormIs(undefined);
