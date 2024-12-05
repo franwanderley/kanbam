@@ -1,16 +1,20 @@
 import { Column } from "@/interface/Column";
 import { useForm } from "react-hook-form";
 
-interface ColumnInput {
-   title: string;
-   order: number;
-   color: string;
-}
+interface FormColumnProps {
+   columns: Column[] | undefined;
+   onClose: () => void;
+   saveColumn: (data: Column) => void;
+};
 
-export const FormColumn = ({ columns, onClose }: {columns?: Column[], onClose: () => void}) => {
-   const { register, handleSubmit } = useForm<ColumnInput>();
+
+export const FormColumn = ({ columns, onClose, saveColumn }: FormColumnProps) => {
+   const { register, handleSubmit } = useForm<Column>();
    const lastOrder = columns?.[columns?.length - 1]?.order || 0;
-   const onSubmit = (data: ColumnInput) => console.log(data);
+   const onSubmit = (data: Column) => {
+      saveColumn({...data, id: String(columns ? columns?.length + 1 : 1)});
+      onClose();
+   };
 
    return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
