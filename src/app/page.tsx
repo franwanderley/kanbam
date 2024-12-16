@@ -8,7 +8,7 @@ export default function Home() {
       <main className="w-full flex flex-col">
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
           <h2 className="text-2xl">Platform Launch</h2>
-          <button disabled className="cursor-pointer text-xs bg-button p-2 rounded-2xl">
+          <button disabled className="cursor-pointer text-xs bg-gray-500 p-2 rounded-2xl">
             + Add New Task
           </button>
         </header>

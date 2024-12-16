@@ -28,13 +28,13 @@ export const ViewCard = ({ onClose, task, columns } : ViewCardProps) => {
             {subtasks?.map(sub => (
                <div key={sub?.id} className="bg-bg-primary p-2 w-full rounded-md mt-3">
                   <input 
-                     id="subtask-1" 
+                     id={`subtask-${sub?.title}`} 
                      type="checkbox" 
                      className="mr-2"
                      defaultChecked={sub?.isFinish} 
-                     onChange={() => setSubtasks(old => old?.map(value => value?.id === sub?.id ? {...value, isFinish: !value?.isFinish} : value))} 
+                     onChange={() => setSubtasks(old => old?.map(value => value?.title === sub?.title ? {...value, isFinish: !value?.isFinish} : value))} 
                   />
-                  <label htmlFor="subtask-1">{sub?.title}</label>
+                  <label htmlFor={`subtask-${sub?.title}`}>{sub?.title}</label>
                </div>
             ))}
             <label htmlFor="status" className="mt-3">Status</label>
