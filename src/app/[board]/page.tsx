@@ -9,8 +9,10 @@ import { Task } from "@/interface/Task";
 import { Board } from "@/interface/Board";
 import { SubTask } from '@/interface/SubTask';
 import { Column } from '@/interface/Column';
+import { useRouter } from 'next/navigation';
 
 export default function BoardPage({ params }: { params: { board: string }}) {
+  const router = useRouter();
   const [whatFormIs, setWhatFormIs] = useState<'FormTask' | 'ViewCard' | 'FormColumn'>();
   const [cardDetail, setCardDetail] = useState<Task>();
   const [board, setBoard] = useState<Board>();
@@ -35,6 +37,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
         tasks: board?.tasks ? [...board.tasks, data]: [data]
       };
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
+      router.refresh();
     }
   };
 
@@ -43,6 +46,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
       const columns = board?.columns?.length ? [...board?.columns, data].sort((a, b) => a.order - b.order) : [data];
       const body = {...board, columns: reOrderColumn(columns?.map(col => ({...col, tasks: undefined})))};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
+      router.refresh();
     }
   };
 
@@ -70,10 +74,10 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const handleViewCardClose = async (subtasks?: SubTask[], columnId?: string) => {
     if (subtasks && columnId) {
-      
-      const tasks = board?.tasks?.map(task => task.id === cardDetail?.id ? {...task, subtasks, columnId} : task); 
+      const tasks = board?.tasks?.map(task => task.title === cardDetail?.title ? {...task, subtasks, columnId} : task); 
       const data = {...board, columns: board?.columns?.map(col => ({...col, tasks: undefined})) , tasks};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(data) });
+      router.refresh();
     }
     handleFormClose();
   };

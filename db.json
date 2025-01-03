@@ -33,7 +33,7 @@
             {
               "id": "1",
               "title": "Design the layout",
-              "isFinish": false
+              "isFinish": true
             },
             {
               "id": "2",
@@ -46,7 +46,7 @@
           "id": "2",
           "title": "Implement the platform's backend",
           "description": "Set up the server, database, and API endpoints",
-          "columnId": "2",
+          "columnId": "1",
           "subtasks": [
             {
               "id": "1",
@@ -83,7 +83,7 @@
         {
           "title": "implements forgot your password",
           "description": "dfsdfsdgfsdgsdf",
-          "columnId": "3",
+          "columnId": "2",
           "subtasks": [
             {
               "title": "create layout",
@@ -92,6 +92,25 @@
             {
               "title": "using the api for send mail",
               "isFinish": true
+            }
+          ]
+        },
+        {
+          "title": "create page perfil for user",
+          "description": "create page perfil for user, create page perfil for user, create page perfil for user",
+          "columnId": "2",
+          "subtasks": [
+            {
+              "title": "create page",
+              "isFinish": false
+            },
+            {
+              "title": "create layout",
+              "isFinish": false
+            },
+            {
+              "title": "use api",
+              "isFinish": false
             }
           ]
         }
@@ -125,6 +144,10 @@
           ]
         }
       ]
+    },
+    {
+      "id": "70fa",
+      "title": "Teste 2"
     }
   ]
 }

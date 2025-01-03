@@ -1,9 +1,12 @@
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 export const FormBoard =  ({ onClose }: { onClose: () => void }) => {
+   const route = useRouter();
    const onSubmit = async (data: { title: string }) => {
       await fetch(`http://localhost:3333/boards`, { method: 'POST', body: JSON.stringify(data) });
       onClose();
+      route.push(`/${data.title}`);
    };
    const { handleSubmit, register } = useForm<{ title: string }>();
 
