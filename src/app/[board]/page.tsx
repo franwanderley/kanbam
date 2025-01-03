@@ -20,8 +20,8 @@ export default function BoardPage({ params }: { params: { board: string }}) {
      const result = await fetch(`http://localhost:3333/boards?title=${params?.board}`);
      const data: Board[] = await result.json();
      const columns = data?.[0]?.columns
-      .sort((a, b) => a.order - b.order)
-      .map(col => ({...col, tasks: data?.[0].tasks?.filter(task => task.columnId === col?.id)}));
+      ?.sort((a, b) => a.order - b.order)
+      ?.map(col => ({...col, tasks: data?.[0].tasks?.filter(task => task.columnId === col?.id)}));
       setBoard({ ...data?.[0], columns });
    };
 
@@ -30,15 +30,18 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const saveTask = async (data?: Task) => {
     if (data && board) {
-      const body = {...board, tasks: [...board.tasks, data]};
+      const body = {
+        ...board,columns: board?.columns?.map(col => ({...col, tasks: undefined})),
+        tasks: board?.tasks ? [...board.tasks, data]: [data]
+      };
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
     }
   };
 
   const saveColumn = async (data?: Column) => {
     if (data && board) {
-      const columns = [...board.columns, data].sort((a, b) => a.order - b.order);
-      const body = {...board, columns: reOrderColumn(columns)};
+      const columns = board?.columns?.length ? [...board?.columns, data].sort((a, b) => a.order - b.order) : [data];
+      const body = {...board, columns: reOrderColumn(columns?.map(col => ({...col, tasks: undefined})))};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
     }
   };
@@ -67,8 +70,9 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const handleViewCardClose = async (subtasks?: SubTask[], columnId?: string) => {
     if (subtasks && columnId) {
+      
       const tasks = board?.tasks?.map(task => task.id === cardDetail?.id ? {...task, subtasks, columnId} : task); 
-      const data = {...board, tasks};
+      const data = {...board, columns: board?.columns?.map(col => ({...col, tasks: undefined})) , tasks};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(data) });
     }
     handleFormClose();
@@ -105,7 +109,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
             <div key={column?.id} className="flex flex-col justify-start mr-6">
               <div className="flex flex-row">
                 <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
-                <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length})</span>
+                <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
               </div>
               {column?.tasks?.map(task => (
                 <Card key={task?.id} task={task} onOpen={() => handleCardDetail(task)} />

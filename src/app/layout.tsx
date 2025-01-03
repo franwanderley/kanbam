@@ -30,7 +30,7 @@ export default function RootLayout({
 }
 
 const getBoards = async () => {
-  const response = await fetch('http://localhost:3333/boards');
+  const response = await fetch('http://localhost:3333/boards', { 'cache': 'no-store' });
   const body = await response.json();
-  return await body;
+  return body;
 }
