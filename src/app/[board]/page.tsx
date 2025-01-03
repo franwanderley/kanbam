@@ -30,7 +30,10 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const saveTask = async (data?: Task) => {
     if (data && board) {
-      const body = {...board, tasks: board?.tasks ? [...board.tasks, data]: [data]};
+      const body = {
+        ...board,columns: board?.columns?.map(col => ({...col, tasks: undefined})),
+        tasks: board?.tasks ? [...board.tasks, data]: [data]
+      };
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
     }
   };
@@ -38,7 +41,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
   const saveColumn = async (data?: Column) => {
     if (data && board) {
       const columns = board?.columns?.length ? [...board?.columns, data].sort((a, b) => a.order - b.order) : [data];
-      const body = {...board, columns: reOrderColumn(columns)};
+      const body = {...board, columns: reOrderColumn(columns?.map(col => ({...col, tasks: undefined})))};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
     }
   };
@@ -67,9 +70,9 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const handleViewCardClose = async (subtasks?: SubTask[], columnId?: string) => {
     if (subtasks && columnId) {
-      console.log(subtasks);
+      
       const tasks = board?.tasks?.map(task => task.id === cardDetail?.id ? {...task, subtasks, columnId} : task); 
-      const data = {...board, tasks};
+      const data = {...board, columns: board?.columns?.map(col => ({...col, tasks: undefined})) , tasks};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(data) });
     }
     handleFormClose();
