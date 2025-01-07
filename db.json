@@ -17,10 +17,16 @@
           "order": 2
         },
         {
+          "title": "TO TEST",
+          "color": "#485d6a",
+          "order": 3,
+          "id": "4"
+        },
+        {
           "id": "3",
           "title": "Done",
           "color": "#FFA500",
-          "order": 3
+          "order": 4
         }
       ],
       "tasks": [

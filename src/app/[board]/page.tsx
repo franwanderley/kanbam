@@ -44,7 +44,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
   const saveColumn = async (data?: Column) => {
     if (data && board) {
       const columns = board?.columns?.length ? [...board?.columns, data].sort((a, b) => a.order - b.order) : [data];
-      const body = {...board, columns: reOrderColumn(columns?.map(col => ({...col, tasks: undefined})))};
+      const body = {...board, columns: reOrderColumn(columns?.map(col => ({ ...col, tasks: undefined })))};
       await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
       router.refresh();
     }
@@ -56,7 +56,8 @@ export default function BoardPage({ params }: { params: { board: string }}) {
         const columnSameOrder = columns?.filter(col => col?.order === order);
         if (columnSameOrder?.length) {
           if (columnSameOrder.length > 1) {
-            orderColumns.push({...columnSameOrder?.[columnSameOrder?.length - 1], order: order + 1});    
+            orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
+            orderColumns.push({...columnSameOrder?.[0], order: order + 1});    
           } else {
             orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
           }
