@@ -7,6 +7,7 @@ import { Board } from '@/interface/Board';
 import Link from 'next/link';
 import { useState } from 'react';
 import { FormBoard } from './FormBoard';
+import Image from 'next/image';
 
 interface SideBarProps {
    boards: Board[] | undefined;
@@ -22,7 +23,7 @@ export const SideBar = ({ boards }: SideBarProps) => {
       <div className="min-h-screen w-1/4 flex flex-col p-4 bg-bg-secondary">
          {openModal && <FormBoard onClose={() => setOpenModal(false)} />}
          <div className="flex flex-row mb-6">
-            <img className="w-6 mr-2" src={kanbam.src} alt="logo do kanbam" />
+            <Image className="w-6 mr-2" src={kanbam} alt="logo do kanbam"/>
             <h1 className="text-2xl">Kanbam</h1>
          </div>
          <div>
