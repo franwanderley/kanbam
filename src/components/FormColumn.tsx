@@ -12,7 +12,7 @@ export const FormColumn = ({ columns, onClose, saveColumn }: FormColumnProps) =>
    const { register, handleSubmit } = useForm<Column>();
    const lastOrder = columns?.[columns?.length - 1]?.order || 0;
    const onSubmit = (data: Column) => {
-      saveColumn({...data, order: Number(data?.order), id: String(columns ? columns?.length + 1 : 1), title: data?.title?.toUpperCase()});
+      saveColumn({...data, order: Number(data?.order), id: crypto.randomUUID(), title: data?.title?.toUpperCase()});
       onClose();
    };
 
