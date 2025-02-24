@@ -1,14 +1,14 @@
 # Projeto simples de um kanbam
-<img src="https://github.com/franwanderley/kanbam/blob/master/public/img/kanbam-print.png" alt="Prints do projeto kanbam">
+<img src="https://github.com/franwanderley/kanbam/blob/master/public/img/kanbam-print.png" alt="Prints do projeto kanbam" />
 
-🚀 Tecnologias Usadas
+### 🚀 Tecnologias Usadas
 React
 NextJs 14
 tailwind
 typescript
 json-server
 
-💻 Usar no seu PC
+### 💻 Usar no seu PC
 npm versão minima 10.0
 git clone https://github.com/franwanderley/kanbam.git
 cd kanbam
