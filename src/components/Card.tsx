@@ -11,8 +11,8 @@ export const Card = ({ task, onOpen }: {onOpen: () => void, task: Task | undefin
    const howSubTaskIsFinish = () => task?.subtasks?.filter(sub => sub?.isFinish)?.length;
    
    return (
-      <div className="bg-bg-secondary p-2 rounded-md cursor-pointer mb-4" onClick={onOpen} style={style} ref={setNodeRef} {...listeners} {...attributes}>
-         <p className="text-sm mb-2">{task?.title}</p>
+      <div className="bg-bg-secondary p-2 rounded-md cursor-pointer mb-4" style={style} ref={setNodeRef} {...listeners} {...attributes}>
+         <p onClick={onOpen} className="text-sm mb-2">{task?.title}</p>
          <span className="text-xs text-gray-400">{`${howSubTaskIsFinish()} of ${task?.subtasks?.length} substasks`}</span>
       </div>
    );

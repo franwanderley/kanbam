@@ -121,7 +121,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
           <DndContext onDragEnd={onMoveTask}>
             {board?.columns?.map(column => (
                 <div key={column?.id} className="flex flex-col justify-start mr-6" ref={setNodeRef} style={{color: isOver ? 'green' : undefined}}>
-                <div className="flex flex-row" >
+                <div className="flex flex-row">
                   <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
                   <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
                 </div>
