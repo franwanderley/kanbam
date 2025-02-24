@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "db": "npx json-server db.json --port=3333",
     "lint": "next lint"
   },
   "dependencies": {
+    "crypto": "^1.0.1",
     "json-server": "^1.0.0-beta.3",
     "kanban": "file:",
     "next": "14.2.5",

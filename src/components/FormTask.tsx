@@ -15,7 +15,7 @@ export const FormTask = ({ columns, onClose, saveTask }: FormTaskProp) => {
    const [subtasks, setSubtasks] = useState(['']);
    const onSubmit = (data : Task) => {
       const filtedSubtasks = subtasks?.filter(sub => sub !== '');
-      saveTask({...data, subtasks: filtedSubtasks?.map(sub => ({title: sub, isFinish: false}))});
+      saveTask({...data, id: crypto.randomUUID(), subtasks: filtedSubtasks?.map(sub => ({title: sub, isFinish: false}))});
       onClose();
    };
 
