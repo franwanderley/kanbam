@@ -1,5 +1,5 @@
 # Projeto simples de um kanbam
-<img src="https://github.com/franwanderley/kanbam/blob/master/img/kanbam-print.png" alt="Prints do projeto kanbam">
+<img src="https://github.com/franwanderley/kanbam/blob/master/public/img/kanbam-print.png" alt="Prints do projeto kanbam">
 
 🚀 Tecnologias Usadas
 React
