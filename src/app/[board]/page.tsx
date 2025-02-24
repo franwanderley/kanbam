@@ -10,9 +10,13 @@ import { Board } from "@/interface/Board";
 import { SubTask } from '@/interface/SubTask';
 import { Column } from '@/interface/Column';
 import { useRouter } from 'next/navigation';
+import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core';
 
 export default function BoardPage({ params }: { params: { board: string }}) {
   const router = useRouter();
+  const {setNodeRef, isOver} = useDroppable({
+    id: 'droppable',
+  });
   const [whatFormIs, setWhatFormIs] = useState<'FormTask' | 'ViewCard' | 'FormColumn'>();
   const [cardDetail, setCardDetail] = useState<Task>();
   const [board, setBoard] = useState<Board>();
@@ -96,6 +100,10 @@ export default function BoardPage({ params }: { params: { board: string }}) {
     setWhatFormIs('FormColumn');
   };
 
+  const onMoveTask = (result: DragEndEvent) => {
+    console.log(result);
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-row bg-bg-primary">
       {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} saveTask={saveTask} onClose={handleFormClose} />}
@@ -110,17 +118,19 @@ export default function BoardPage({ params }: { params: { board: string }}) {
           </button>
         </header>
         <div className="p-4 flex flex-row">
-          {board?.columns?.map(column => (
-            <div key={column?.id} className="flex flex-col justify-start mr-6">
-              <div className="flex flex-row">
-                <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
-                <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
+          <DndContext onDragEnd={onMoveTask}>
+            {board?.columns?.map(column => (
+                <div key={column?.id} className="flex flex-col justify-start mr-6" ref={setNodeRef} style={{color: isOver ? 'green' : undefined}}>
+                <div className="flex flex-row">
+                  <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
+                  <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
+                </div>
+                {column?.tasks?.map(task => (
+                  <Card key={task?.id} task={task} onOpen={() => handleCardDetail(task)} />
+                ))}
               </div>
-              {column?.tasks?.map(task => (
-                <Card key={task?.id} task={task} onOpen={() => handleCardDetail(task)} />
-              ))}
-            </div>
-          ))}
+            ))}
+          </DndContext>
           <div onClick={handleNewColumn} className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer">
             <span className="text-center">+ New Column</span>
           </div>
