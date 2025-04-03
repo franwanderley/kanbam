@@ -15,12 +15,23 @@ interface SideBarProps {
 }
 
 export const SideBar = ({ boards }: SideBarProps) => {
-   const [openModal, setOpenModal] = useState<boolean>();
    const boardName = usePathname();
+   const [openModal, setOpenModal] = useState<boolean>();
+   console.log(boardName);
+   const [openSideBar, setOpenSideBar] = useState(!boardName.substring(1));
    const forString = () => boardName && boardName.substring(1).split('%20').join(' ');
 
+   if(!openSideBar) {
+      return (
+         <div className="cursor-pointer md:fixed absolute flex flex-row bottom-3 ml-4 border-none align-middle text-gray-400">
+            <Hide width="20px" height="15px" />
+            <span onClick={() => setOpenSideBar(old => !old)} className="text-sm">Open SideBar</span>
+         </div>
+      );
+   }
+
    return (
-      <div className="min-h-screen w-1/4 flex flex-col p-4 bg-bg-secondary">
+      <div className="min-h-screen w-1/5 flex flex-col p-4 bg-bg-secondary">
          {openModal && <FormBoard onClose={() => setOpenModal(false)} />}
          <div className="flex flex-row mb-6">
             <Image className="w-6 mr-2" src={kanbam} alt="logo do kanbam"/>
@@ -46,9 +57,9 @@ export const SideBar = ({ boards }: SideBarProps) => {
                </p>
             </div>
          </div>
-         <div className="cursor-pointer flex flex-row fixed bottom-3 align-middle text-gray-400">
+         <div className="cursor-pointer flex flex-row md:fixed absolute bottom-3 align-middle text-gray-400">
             <Hide width="20px" height="15px" />
-            <span className="text-sm">Hide SideBar</span>
+            <span onClick={() => setOpenSideBar(old => !old)} className="text-sm">Hide SideBar</span>
          </div>
       </div>
    );

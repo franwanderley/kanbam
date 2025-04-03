@@ -19,7 +19,7 @@ export default function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={[inter.className, 'flex min-h-screen flex-row bg-bg-primary divide-x'].join(' ')}>
+      <body className={`${inter.className} md:min-h-screen md:min-w-full min-w-max overflow-x-scroll flex bg-bg-primary divide-x`}>
         {getBoards().then(boards => (
           <SideBar boards={boards} />
         ))}

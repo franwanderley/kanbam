@@ -19,16 +19,20 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   useEffect(() => {
    const getBoardByTitle = async () => {
-     const result = await fetch(`http://localhost:3333/boards?title=${params?.board}`);
-     const data: Board[] = await result.json();
-     const columns = data?.[0]?.columns
-      ?.sort((a, b) => a.order - b.order)
-      ?.map(col => ({...col, tasks: data?.[0].tasks?.filter(task => task.columnId === col?.id)}));
+    try{
+      const result = await fetch(`http://localhost:3333/boards?title=${params?.board}`);
+      const data: Board[] = await result.json();
+      const columns = data?.[0]?.columns
+        ?.sort((a, b) => a.order - b.order)
+        ?.map(col => ({...col, tasks: data?.[0].tasks?.filter(task => task.columnId === col?.id)}));
       setBoard({ ...data?.[0], columns });
+    } catch(e) {
+      router.push('/error');
+    }
    };
 
    getBoardByTitle();
-  },[params]);
+  },[params, router]);
 
   const saveTask = async (data?: Task) => {
     if (data && board) {
@@ -97,7 +101,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-row bg-bg-primary">
+    <div className="flex md:min-h-screen w-full flex-row bg-bg-primary">
       {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} saveTask={saveTask} onClose={handleFormClose} />}
       {whatFormIs === 'ViewCard' && <ViewCard columns={board?.columns} task={cardDetail} onClose={handleViewCardClose} />}
       {whatFormIs === 'FormColumn' && <FormColumn columns={board?.columns} saveColumn={saveColumn} onClose={handleFormClose} />}
