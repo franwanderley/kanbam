@@ -10,6 +10,7 @@ import { Board } from "@/interface/Board";
 import { SubTask } from '@/interface/SubTask';
 import { Column } from '@/interface/Column';
 import { useRouter } from 'next/navigation';
+import { DragDropContext, Droppable, DropResult, OnDragEndResponder, ResponderProvided } from 'react-beautiful-dnd';
 
 export default function BoardPage({ params }: { params: { board: string }}) {
   const router = useRouter();
@@ -100,6 +101,10 @@ export default function BoardPage({ params }: { params: { board: string }}) {
     setWhatFormIs('FormColumn');
   };
 
+  const onMoveCard = (result: DropResult, provided: ResponderProvided) => {
+    console.log(result);
+  }
+
   return (
     <div className="flex md:min-h-screen w-full flex-row bg-bg-primary">
       {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} saveTask={saveTask} onClose={handleFormClose} />}
@@ -114,17 +119,28 @@ export default function BoardPage({ params }: { params: { board: string }}) {
           </button>
         </header>
         <div className="p-4 flex flex-row">
-          {board?.columns?.map(column => (
-            <div key={column?.id} className="flex flex-col justify-start mr-6">
-              <div className="flex flex-row">
-                <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
-                <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
-              </div>
-              {column?.tasks?.map(task => (
-                <Card key={task?.id} task={task} onOpen={() => handleCardDetail(task)} />
-              ))}
-            </div>
-          ))}
+          <DragDropContext onDragEnd={onMoveCard}>
+            {board?.columns?.map(column => (
+              <Droppable key={column?.id} droppableId={column?.id}>
+                {(provided, snapshot) => (
+                  <div 
+                    className="flex flex-col justify-start mr-6"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                  <div className="flex flex-row">
+                    <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
+                    <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
+                    {provided.placeholder}
+                  </div>
+                  {column?.tasks?.map(task => (
+                    <Card key={task?.id} task={task} onOpen={() => handleCardDetail(task)} />
+                  ))}
+                </div>
+                )}
+              </Droppable>
+            ))}
+          </DragDropContext>
           <div onClick={handleNewColumn} className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer">
             <span className="text-center">+ New Column</span>
           </div>
