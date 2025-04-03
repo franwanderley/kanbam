@@ -1,6 +1,7 @@
 'use client'
 import { usePathname } from 'next/navigation';
 import { Hide } from '../../public/img/Hide';
+import { Eye } from '../../public/img/Eye';
 import kanbam from '../../public/img/kanbam.png';
 import { ViewFinder } from '../../public/img/ViewFinder';
 import { Board } from '@/interface/Board';
@@ -24,14 +25,14 @@ export const SideBar = ({ boards }: SideBarProps) => {
    if(!openSideBar) {
       return (
          <div className="cursor-pointer md:fixed absolute flex flex-row bottom-3 ml-4 border-none align-middle text-gray-400">
-            <Hide width="20px" height="15px" />
+            <Eye width="20px" height="15px" />
             <span onClick={() => setOpenSideBar(old => !old)} className="text-sm">Open SideBar</span>
          </div>
       );
    }
 
    return (
-      <div className="min-h-screen w-1/5 flex flex-col p-4 bg-bg-secondary">
+      <div className="min-h-screen md:w-1/5 w-full flex flex-col p-4 bg-bg-secondary">
          {openModal && <FormBoard onClose={() => setOpenModal(false)} />}
          <div className="flex flex-row mb-6">
             <Image className="w-6 mr-2" src={kanbam} alt="logo do kanbam"/>

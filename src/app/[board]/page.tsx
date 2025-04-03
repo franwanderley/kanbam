@@ -20,7 +20,7 @@ export default function BoardPage({ params }: { params: { board: string }}) {
   useEffect(() => {
    const getBoardByTitle = async () => {
     try{
-      const result = await fetch(`http://localhost:3333/boards?title=${params?.board}`);
+      const result = await fetch(`http://10.0.0.196:3333/boards?title=${params?.board}`);
       const data: Board[] = await result.json();
       const columns = data?.[0]?.columns
         ?.sort((a, b) => a.order - b.order)
