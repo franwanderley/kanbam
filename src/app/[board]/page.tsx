@@ -1,88 +1,129 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/Card";
 import { FormTask } from "@/components/FormTask";
 import { ViewCard } from "@/components/ViewCard";
 import { FormColumn } from "@/components/FormColumn";
 import { Task } from "@/interface/Task";
 import { Board } from "@/interface/Board";
-import { SubTask } from '@/interface/SubTask';
-import { Column } from '@/interface/Column';
-import { useRouter } from 'next/navigation';
-import { DragDropContext, Droppable, DropResult, OnDragEndResponder, ResponderProvided } from 'react-beautiful-dnd';
+import { SubTask } from "@/interface/SubTask";
+import { Column } from "@/interface/Column";
+import { useRouter } from "next/navigation";
+import {
+  DragDropContext,
+  Droppable,
+  DropResult,
+  OnDragEndResponder,
+  ResponderProvided,
+} from "react-beautiful-dnd";
 
-export default function BoardPage({ params }: { params: { board: string }}) {
+export default function BoardPage({ params }: { params: { board: string } }) {
   const router = useRouter();
-  const [whatFormIs, setWhatFormIs] = useState<'FormTask' | 'ViewCard' | 'FormColumn'>();
+  const [whatFormIs, setWhatFormIs] = useState<
+    "FormTask" | "ViewCard" | "FormColumn"
+  >();
   const [cardDetail, setCardDetail] = useState<Task>();
   const [board, setBoard] = useState<Board>();
 
   useEffect(() => {
-   const getBoardByTitle = async () => {
-    try{
-      const result = await fetch(`http://10.0.0.196:3333/boards?title=${params?.board}`);
-      const data: Board[] = await result.json();
-      const columns = data?.[0]?.columns
-        ?.sort((a, b) => a.order - b.order)
-        ?.map(col => ({...col, tasks: data?.[0].tasks?.filter(task => task.columnId === col?.id)}));
-      setBoard({ ...data?.[0], columns });
-    } catch(e) {
-      router.push('/error');
-    }
-   };
+    const getBoardByTitle = async () => {
+      try {
+        const result = await fetch(
+          `http://10.0.0.196:3333/boards?title=${params?.board}`
+        );
+        const data: Board[] = await result.json();
+        const columns = data?.[0]?.columns
+          ?.sort((a, b) => a.order - b.order)
+          ?.map((col) => ({
+            ...col,
+            tasks: data?.[0].tasks?.filter((task) => task.columnId === col?.id),
+          }));
+        setBoard({ ...data?.[0], columns });
+      } catch (e) {
+        router.push("/error");
+      }
+    };
 
-   getBoardByTitle();
-  },[params, router]);
+    getBoardByTitle();
+  }, [params, router]);
 
   const saveTask = async (data?: Task) => {
     if (data && board) {
       const body = {
-        ...board,columns: board?.columns?.map(col => ({...col, tasks: undefined})),
-        tasks: board?.tasks ? [...board.tasks, data]: [data]
+        ...board,
+        columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
+        tasks: board?.tasks ? [...board.tasks, data] : [data],
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
+      await fetch(`http://localhost:3333/boards/${board?.id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
       router.refresh();
     }
   };
 
   const saveColumn = async (data?: Column) => {
     if (data && board) {
-      const columns = board?.columns?.length ? [...board?.columns, data].sort((a, b) => a.order - b.order) : [data];
-      const body = {...board, columns: reOrderColumn(columns?.map(col => ({ ...col, tasks: undefined })))};
-      await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(body) });
+      const columns = board?.columns?.length
+        ? [...board?.columns, data].sort((a, b) => a.order - b.order)
+        : [data];
+      const body = {
+        ...board,
+        columns: reOrderColumn(
+          columns?.map((col) => ({ ...col, tasks: undefined }))
+        ),
+      };
+      await fetch(`http://localhost:3333/boards/${board?.id}`, {
+        method: "PUT",
+        body: JSON.stringify(body),
+      });
       router.refresh();
     }
   };
 
   const reOrderColumn = (columns: Column[]) => {
-      const orderColumns: Column[] = [];
-      const recursColumn = (order: number) => {
-        const columnSameOrder = columns?.filter(col => col?.order === order);
-        if (columnSameOrder?.length) {
-          if (columnSameOrder.length > 1) {
-            orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-            orderColumns.push({...columnSameOrder?.[0], order: order + 1});    
-          } else {
-            orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-          }
-          recursColumn(order + 1);
+    const orderColumns: Column[] = [];
+    const recursColumn = (order: number) => {
+      const columnSameOrder = columns?.filter((col) => col?.order === order);
+      if (columnSameOrder?.length) {
+        if (columnSameOrder.length > 1) {
+          orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
+          orderColumns.push({ ...columnSameOrder?.[0], order: order + 1 });
+        } else {
+          orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
         }
+        recursColumn(order + 1);
       }
-      recursColumn(columns?.[0]?.order);
-      return orderColumns;
-  }
+    };
+    recursColumn(columns?.[0]?.order);
+    return orderColumns;
+  };
 
   const handleFormClose = () => {
     setWhatFormIs(undefined);
     setCardDetail(undefined);
   };
 
-  const handleViewCardClose = async (subtasks?: SubTask[], columnId?: string) => {
+  const handleViewCardClose = async (
+    subtasks?: SubTask[],
+    columnId?: string
+  ) => {
     if (subtasks && columnId) {
-      const tasks = board?.tasks?.map(task => task.title === cardDetail?.title ? {...task, subtasks, columnId} : task); 
-      const data = {...board, columns: board?.columns?.map(col => ({...col, tasks: undefined})) , tasks};
-      await fetch(`http://localhost:3333/boards/${board?.id}`, { method: 'PUT', body: JSON.stringify(data) });
+      const tasks = board?.tasks?.map((task) =>
+        task.title === cardDetail?.title
+          ? { ...task, subtasks, columnId }
+          : task
+      );
+      const data = {
+        ...board,
+        columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
+        tasks,
+      };
+      await fetch(`http://localhost:3333/boards/${board?.id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
       router.refresh();
     }
     handleFormClose();
@@ -90,58 +131,104 @@ export default function BoardPage({ params }: { params: { board: string }}) {
 
   const handleCardDetail = (card: Task) => {
     setCardDetail(card);
-    setWhatFormIs('ViewCard');
+    setWhatFormIs("ViewCard");
   };
 
   const handleNewTask = () => {
-    setWhatFormIs('FormTask');
+    setWhatFormIs("FormTask");
   };
 
   const handleNewColumn = () => {
-    setWhatFormIs('FormColumn');
+    setWhatFormIs("FormColumn");
   };
 
-  const onMoveCard = (result: DropResult, provided: ResponderProvided) => {
-    console.log(result);
-  }
+  const onMoveCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
+    if (!destination || !draggableId) return;
+
+    const body = {
+      tasks: board?.tasks?.map((task) =>
+        task.id === draggableId
+          ? { ...task, columnId: destination.droppableId }
+          : task
+      ),
+    };
+    await fetch(`http://localhost:3333/boards/${board?.id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
+    router.refresh();
+  };
 
   return (
     <div className="flex md:min-h-screen w-full flex-row bg-bg-primary">
-      {whatFormIs === 'FormTask' && <FormTask columns={board?.columns} saveTask={saveTask} onClose={handleFormClose} />}
-      {whatFormIs === 'ViewCard' && <ViewCard columns={board?.columns} task={cardDetail} onClose={handleViewCardClose} />}
-      {whatFormIs === 'FormColumn' && <FormColumn columns={board?.columns} saveColumn={saveColumn} onClose={handleFormClose} />}
+      {whatFormIs === "FormTask" && (
+        <FormTask
+          columns={board?.columns}
+          saveTask={saveTask}
+          onClose={handleFormClose}
+        />
+      )}
+      {whatFormIs === "ViewCard" && (
+        <ViewCard
+          columns={board?.columns}
+          task={cardDetail}
+          onClose={handleViewCardClose}
+        />
+      )}
+      {whatFormIs === "FormColumn" && (
+        <FormColumn
+          columns={board?.columns}
+          saveColumn={saveColumn}
+          onClose={handleFormClose}
+        />
+      )}
 
       <main className="w-full flex flex-col">
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
           <h2 className="text-2xl">{board?.title}</h2>
-          <button onClick={handleNewTask} className="cursor-pointer text-xs bg-button p-2 rounded-2xl">
+          <button
+            onClick={handleNewTask}
+            className="cursor-pointer text-xs bg-button p-2 rounded-2xl"
+          >
             + Add New Task
           </button>
         </header>
         <div className="p-4 flex flex-row">
           <DragDropContext onDragEnd={onMoveCard}>
-            {board?.columns?.map(column => (
+            {board?.columns?.map((column) => (
               <Droppable key={column?.id} droppableId={column?.id}>
-                {(provided, snapshot) => (
-                  <div 
+                {(provided, _) => (
+                  <div
                     className="flex flex-col justify-start mr-6"
                     ref={provided.innerRef}
                     {...provided.droppableProps}
                   >
-                  <div className="flex flex-row">
-                    <div style={{backgroundColor: column?.color}} className={`mb-4 p-2 rounded-full mr-2`}/>
-                    <span className="text-gray-400 text-xs">{column?.title} ({column?.tasks?.length || 0})</span>
+                    <div className="flex flex-row">
+                      <div
+                        style={{ backgroundColor: column?.color }}
+                        className={`mb-4 p-2 rounded-full mr-2`}
+                      />
+                      <span className="text-gray-400 text-xs">
+                        {column?.title} ({column?.tasks?.length || 0})
+                      </span>
+                    </div>
+                    {column?.tasks?.map((task) => (
+                      <Card
+                        key={task?.id}
+                        task={task}
+                        onOpen={() => handleCardDetail(task)}
+                      />
+                    ))}
                     {provided.placeholder}
                   </div>
-                  {column?.tasks?.map(task => (
-                    <Card key={task?.id} task={task} onOpen={() => handleCardDetail(task)} />
-                  ))}
-                </div>
                 )}
               </Droppable>
             ))}
           </DragDropContext>
-          <div onClick={handleNewColumn} className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer">
+          <div
+            onClick={handleNewColumn}
+            className="flex flex-col justify-center items-center mr-6 p-4 bg-bg-secondary rounded-md cursor-pointer"
+          >
             <span className="text-center">+ New Column</span>
           </div>
         </div>
