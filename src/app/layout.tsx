@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SideBar } from "@/components/SideBar";
+import { getAllBoards } from "@/service/api";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +31,5 @@ export default function RootLayout({
 }
 
 const getBoards = async () => {
-  const response = await fetch('http://localhost:3333/boards', { 'cache': 'no-store' });
-  const body = await response.json();
-  return body;
+  return await getAllBoards();
 }

@@ -16,6 +16,7 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
+import { getBoardByTitle, patchBoard, saveBoard } from "@/service/api";
 
 export default function BoardPage({ params }: { params: { board: string } }) {
   const router = useRouter();
@@ -26,12 +27,9 @@ export default function BoardPage({ params }: { params: { board: string } }) {
   const [board, setBoard] = useState<Board>();
 
   useEffect(() => {
-    const getBoardByTitle = async () => {
+    const getBoard = async () => {
       try {
-        const result = await fetch(
-          `http://10.0.0.196:3333/boards?title=${params?.board}`
-        );
-        const data: Board[] = await result.json();
+        const data = await getBoardByTitle(params.board);
         const columns = data?.[0]?.columns
           ?.sort((a, b) => a.order - b.order)
           ?.map((col) => ({
@@ -44,7 +42,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       }
     };
 
-    getBoardByTitle();
+    getBoard();
   }, [params, router]);
 
   const saveTask = async (data?: Task) => {
@@ -54,10 +52,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
         tasks: board?.tasks ? [...board.tasks, data] : [data],
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(body),
-      });
+      await saveBoard(body);
       router.refresh();
     }
   };
@@ -73,10 +68,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           columns?.map((col) => ({ ...col, tasks: undefined }))
         ),
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(body),
-      });
+      await saveBoard(body);
       router.refresh();
     }
   };
@@ -114,15 +106,12 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           ? { ...task, subtasks, columnId }
           : task
       );
-      const data = {
+      const body = {
         ...board,
         columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
         tasks,
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await saveBoard(body);
       router.refresh();
     }
     handleFormClose();
@@ -149,10 +138,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         ? { ...task, columnId: destination.droppableId }
         : task
     );
-    await fetch(`http://localhost:3333/boards/${board?.id}`, {
-      method: "PATCH",
-      body: JSON.stringify({ tasks }),
-    });
+    await patchBoard(tasks, board?.id);
     router.refresh();
   };
 
