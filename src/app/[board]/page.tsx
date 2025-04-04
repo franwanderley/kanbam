@@ -14,7 +14,6 @@ import {
   DragDropContext,
   Droppable,
   DropResult,
-  OnDragEndResponder,
   ResponderProvided,
 } from "react-beautiful-dnd";
 
@@ -142,19 +141,17 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     setWhatFormIs("FormColumn");
   };
 
-  const onMoveCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
+  const onDropCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
     if (!destination || !draggableId) return;
 
-    const body = {
-      tasks: board?.tasks?.map((task) =>
-        task.id === draggableId
-          ? { ...task, columnId: destination.droppableId }
-          : task
-      ),
-    };
+    const tasks = board?.tasks?.map((task) =>
+      task.id === draggableId
+        ? { ...task, columnId: destination.droppableId }
+        : task
+    );
     await fetch(`http://localhost:3333/boards/${board?.id}`, {
       method: "PATCH",
-      body: JSON.stringify(body),
+      body: JSON.stringify({ tasks }),
     });
     router.refresh();
   };
@@ -194,7 +191,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           </button>
         </header>
         <div className="p-4 flex flex-row">
-          <DragDropContext onDragEnd={onMoveCard}>
+          <DragDropContext onDragEnd={onDropCard}>
             {board?.columns?.map((column) => (
               <Droppable key={column?.id} droppableId={column?.id}>
                 {(provided, _) => (
