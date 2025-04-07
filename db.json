@@ -135,11 +135,11 @@
             },
             {
               "title": "Usar feign client",
-              "isFinish": false
+              "isFinish": true
             },
             {
               "title": "Testar no o sandbox",
-              "isFinish": false
+              "isFinish": true
             }
           ]
         }
@@ -164,7 +164,7 @@
           "subtasks": [
             {
               "title": "create page",
-              "isFinish": true
+              "isFinish": false
             },
             {
               "title": "create layout",

@@ -1,17 +1,14 @@
+'use server'
+
 import { Board } from "@/interface/Board";
 import { Task } from "@/interface/Task";
-
-// Environment variable - make sure it's properly configured
-const API_BASE_URL = process.env.REACT_APP_HOST;
 
 interface OptionsRequest extends RequestInit {
    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
 }
 
 const apiFetch = async (endpoint: string, options: OptionsRequest) => {
-  const url = `${API_BASE_URL}${endpoint}`;
-  
-  // Set default headers
+  const url = `${process.env.REACT_APP_HOST}${endpoint}`;
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -20,6 +17,7 @@ const apiFetch = async (endpoint: string, options: OptionsRequest) => {
   try {
     const response = await fetch(url, {
       ...options,
+      cache: 'no-cache',
       headers,
     });
 
@@ -36,7 +34,7 @@ const apiFetch = async (endpoint: string, options: OptionsRequest) => {
 };
 
 export const getAllBoards = async () => {
-  return apiFetch('/boards', { method: 'GET', cache: 'no-store' });
+  return apiFetch('/boards', { method: 'GET' });
 };
 
 export const getBoardByTitle: (title: string) => Promise<Board[]> = async (title) => {
@@ -65,8 +63,6 @@ export const patchBoard = async (tasks: Task[] | undefined, id: string | undefin
    });
  };
 
-// DELETE request example
-// Axios: api.delete('/endpoint')
 const deleteData = async () => {
   return apiFetch('/endpoint', { method: 'DELETE' });
 };

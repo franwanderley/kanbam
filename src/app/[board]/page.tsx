@@ -58,8 +58,9 @@ export default function BoardPage({ params }: { params: { board: string } }) {
   };
 
   const saveColumn = async (data?: Column) => {
-    if (data && board) {
-      const columns = board?.columns?.length
+    if (!data || !board) return;
+
+    const columns = board?.columns?.length
         ? [...board?.columns, data].sort((a, b) => a.order - b.order)
         : [data];
       const body = {
@@ -70,7 +71,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       };
       await saveBoard(body);
       router.refresh();
-    }
   };
 
   const reOrderColumn = (columns: Column[]) => {
@@ -182,6 +182,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
               <Droppable key={column?.id} droppableId={column?.id}>
                 {(provided, _) => (
                   <div
+                    key={column?.id}
                     className="flex flex-col justify-start mr-6"
                     ref={provided.innerRef}
                     {...provided.droppableProps}
