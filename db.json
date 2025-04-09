@@ -152,8 +152,14 @@
         {
           "title": "TO TESTE",
           "color": "#272f4e",
-          "order": "1",
+          "order": 1,
           "id": "1"
+        },
+        {
+          "title": "DOING",
+          "color": "#379a7c",
+          "order": 2,
+          "id": "3d9fb12d-0027-4a3a-9c84-1699d8dabcd7"
         }
       ],
       "tasks": [
@@ -183,6 +189,12 @@
           "color": "#404d8c",
           "order": 1,
           "id": "e9ca45ef-3c3c-4c38-922a-f7de490ddb98"
+        },
+        {
+          "title": "DOING",
+          "color": "#151751",
+          "order": 2,
+          "id": "de04d0f1-7be9-43c7-9a6b-4f33a2ccd6f4"
         }
       ],
       "tasks": [

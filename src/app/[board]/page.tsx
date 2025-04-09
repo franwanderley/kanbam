@@ -77,15 +77,14 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     const orderColumns: Column[] = [];
     const recursColumn = (order: number) => {
       const columnSameOrder = columns?.filter((col) => col?.order === order);
-      if (columnSameOrder?.length) {
-        if (columnSameOrder.length > 1) {
-          orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-          orderColumns.push({ ...columnSameOrder?.[0], order: order + 1 });
-        } else {
-          orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-        }
-        recursColumn(order + 1);
+      if (!columnSameOrder?.length) return;
+      if (columnSameOrder.length > 1) {
+        orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
+        orderColumns.push({ ...columnSameOrder?.[0], order: order + 1 });
+      } else {
+        orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
       }
+      recursColumn(order + 1);
     };
     recursColumn(columns?.[0]?.order);
     return orderColumns;
