@@ -141,9 +141,18 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         ? { ...task, columnId: destination.droppableId }
         : task
     );
+    reOrderTask(tasks);
     await patchBoard(tasks, board?.id);
-    setBoard(old => (old?.id && tasks) ? ({ ...old, tasks }): undefined);
-    //router.refresh();
+  };
+
+  const reOrderTask = (tasks: Task[] | undefined) => {
+     const columns = board?.columns
+          ?.sort((a, b) => a.order - b.order)
+          ?.map((col) => ({
+            ...col,
+            tasks: tasks?.filter((task) => task.columnId === col?.id),
+          }));
+    setBoard(old => (old?.id && columns) ? ({ ...old, columns }): undefined);
   };
 
   return (
