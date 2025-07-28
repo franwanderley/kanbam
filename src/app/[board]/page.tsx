@@ -30,6 +30,10 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     const getBoard = async () => {
       try {
         const data = await getBoardByTitle(params.board);
+        console.log(data);
+        if (!data || data?.length === 0) {
+          throw new Error('board dont exist!');
+        }
         const columns = data?.[0]?.columns
           ?.sort((a, b) => a.order - b.order)
           ?.map((col) => ({
@@ -138,7 +142,8 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         : task
     );
     await patchBoard(tasks, board?.id);
-    router.refresh();
+    setBoard(old => (old?.id && tasks) ? ({ ...old, tasks }): undefined);
+    //router.refresh();
   };
 
   return (
@@ -178,8 +183,8 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         <div className="p-4 flex flex-row">
           <DragDropContext onDragEnd={onDropCard}>
             {board?.columns?.map((column) => (
-              <Droppable key={column?.id} droppableId={column?.id}>
-                {(provided, _) => (
+              <Droppable key={column?.id} droppableId={column?.id} type="COLUMN">
+                {(provided) => (
                   <div
                     key={column?.id}
                     className="flex flex-col justify-start mr-6"

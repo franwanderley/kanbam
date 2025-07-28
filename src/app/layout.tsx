@@ -16,12 +16,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
   return (
     <html lang="pt-BR">
-      <body className={`${inter.className} md:min-h-screen md:min-w-full min-w-max overflow-x-scroll flex bg-bg-primary divide-x`}>
-        {getBoards().then(boards => (
+      <body
+        className={`${inter.className} md:min-h-screen md:min-w-full min-w-max md:overflow-x-hidden overflow-x-scroll flex bg-bg-primary divide-x`}
+      >
+        {getBoards().then((boards) => (
           <SideBar boards={boards} />
         ))}
         {children}
@@ -32,4 +32,4 @@ export default function RootLayout({
 
 const getBoards = async () => {
   return await getAllBoards();
-}
+};
