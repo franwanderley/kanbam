@@ -94,6 +94,16 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     return orderColumns;
   };
 
+  const reOrderTask = (tasks: Task[] | undefined) => {
+     const columns = board?.columns
+          ?.sort((a, b) => a.order - b.order)
+          ?.map((col) => ({
+            ...col,
+            tasks: tasks?.filter((task) => task.columnId === col?.id),
+          }));
+    setBoard(old => (old?.id && columns) ? ({ ...old, columns }): undefined);
+  };
+
   const handleFormClose = () => {
     setWhatFormIs(undefined);
     setCardDetail(undefined);
@@ -125,13 +135,9 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     setWhatFormIs("ViewCard");
   };
 
-  const handleNewTask = () => {
-    setWhatFormIs("FormTask");
-  };
+  const handleNewTask = () => setWhatFormIs("FormTask");
 
-  const handleNewColumn = () => {
-    setWhatFormIs("FormColumn");
-  };
+  const handleNewColumn = () => setWhatFormIs("FormColumn");
 
   const onDropCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
     if (!destination || !draggableId) return;
@@ -143,16 +149,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     );
     reOrderTask(tasks);
     await patchBoard(tasks, board?.id);
-  };
-
-  const reOrderTask = (tasks: Task[] | undefined) => {
-     const columns = board?.columns
-          ?.sort((a, b) => a.order - b.order)
-          ?.map((col) => ({
-            ...col,
-            tasks: tasks?.filter((task) => task.columnId === col?.id),
-          }));
-    setBoard(old => (old?.id && columns) ? ({ ...old, columns }): undefined);
   };
 
   return (
