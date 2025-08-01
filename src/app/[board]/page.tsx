@@ -28,22 +28,17 @@ export default function BoardPage({ params }: { params: { board: string } }) {
 
   useEffect(() => {
     const getBoard = async () => {
-      try {
-        const data = await getBoardByTitle(params.board);
-        console.log(data);
-        if (!data || data?.length === 0) {
-          throw new Error('board dont exist!');
-        }
-        const columns = data?.[0]?.columns
-          ?.sort((a, b) => a.order - b.order)
-          ?.map((col) => ({
-            ...col,
-            tasks: data?.[0].tasks?.filter((task) => task.columnId === col?.id),
-          }));
-        setBoard({ ...data?.[0], columns });
-      } catch (e) {
-        router.push("/error");
+      const data = await getBoardByTitle(params.board);
+      if (!data || data?.length === 0) {
+        throw new Error('no board found');
       }
+      const columns = data?.[0]?.columns
+        ?.sort((a, b) => a.order - b.order)
+        ?.map((col) => ({
+          ...col,
+          tasks: data?.[0].tasks?.filter((task) => task.columnId === col?.id),
+        }));
+      setBoard({ ...data?.[0], columns });
     };
 
     getBoard();
