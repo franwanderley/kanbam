@@ -1,6 +1,6 @@
 # Projeto simples de um kanbam
 <video width="640" height="360" autoplay>
-  <source src="https://github.com/franwanderley/kanbam/blob/master/public/screen/capture.webm" type="video/webm">
+  <source src="https://raw.githubusercontent.com/franwanderley/kanbam/master/public/screen/capture.webm" type="video/webm">
   Seu navegador não suporta a tag de vídeo.
 </video>
 ### 🚀 Tecnologias Usadas
