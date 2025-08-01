@@ -1,5 +1,4 @@
 # Projeto simples de um kanbam
-<img src="https://github.com/franwanderley/kanbam/blob/master/public/img/kanbam-print.png" alt="Prints do projeto kanbam" />
 <video width="640" height="360" autoplay>
   <source src="https://github.com/franwanderley/kanbam/blob/master/public/video/capture.webm" type="video/webm">
   Seu navegador não suporta a tag de vídeo.
