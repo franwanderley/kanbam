@@ -1,8 +1,5 @@
 # Projeto simples de um kanbam
-<video width="640" height="360" autoplay>
-  <source src="https://raw.githubusercontent.com/franwanderley/kanbam/master/public/screen/capture.webm" type="video/webm">
-  Seu navegador não suporta a tag de vídeo.
-</video>
+![Demonstração do Kanban](https://raw.githubusercontent.com/franwanderley/kanbam/master/public/screen/capture.gif)
 ### 🚀 Tecnologias Usadas
 * React
 * NextJs 14
