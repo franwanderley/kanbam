@@ -16,6 +16,7 @@ import {
   DropResult,
   ResponderProvided,
 } from "react-beautiful-dnd";
+import { getBoardByTitle, patchBoard, saveBoard } from "@/service/api";
 
 export default function BoardPage({ params }: { params: { board: string } }) {
   const router = useRouter();
@@ -26,25 +27,21 @@ export default function BoardPage({ params }: { params: { board: string } }) {
   const [board, setBoard] = useState<Board>();
 
   useEffect(() => {
-    const getBoardByTitle = async () => {
-      try {
-        const result = await fetch(
-          `http://10.0.0.196:3333/boards?title=${params?.board}`
-        );
-        const data: Board[] = await result.json();
-        const columns = data?.[0]?.columns
-          ?.sort((a, b) => a.order - b.order)
-          ?.map((col) => ({
-            ...col,
-            tasks: data?.[0].tasks?.filter((task) => task.columnId === col?.id),
-          }));
-        setBoard({ ...data?.[0], columns });
-      } catch (e) {
-        router.push("/error");
+    const getBoard = async () => {
+      const data = await getBoardByTitle(params.board);
+      if (!data || data?.length === 0) {
+        throw new Error('no board found');
       }
+      const columns = data?.[0]?.columns
+        ?.sort((a, b) => a.order - b.order)
+        ?.map((col) => ({
+          ...col,
+          tasks: data?.[0].tasks?.filter((task) => task.columnId === col?.id),
+        }));
+      setBoard({ ...data?.[0], columns });
     };
 
-    getBoardByTitle();
+    getBoard();
   }, [params, router]);
 
   const saveTask = async (data?: Task) => {
@@ -54,17 +51,15 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
         tasks: board?.tasks ? [...board.tasks, data] : [data],
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(body),
-      });
+      await saveBoard(body);
       router.refresh();
     }
   };
 
   const saveColumn = async (data?: Column) => {
-    if (data && board) {
-      const columns = board?.columns?.length
+    if (!data || !board) return;
+
+    const columns = board?.columns?.length
         ? [...board?.columns, data].sort((a, b) => a.order - b.order)
         : [data];
       const body = {
@@ -73,30 +68,35 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           columns?.map((col) => ({ ...col, tasks: undefined }))
         ),
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(body),
-      });
+      await saveBoard(body);
       router.refresh();
-    }
   };
 
   const reOrderColumn = (columns: Column[]) => {
     const orderColumns: Column[] = [];
     const recursColumn = (order: number) => {
       const columnSameOrder = columns?.filter((col) => col?.order === order);
-      if (columnSameOrder?.length) {
-        if (columnSameOrder.length > 1) {
-          orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-          orderColumns.push({ ...columnSameOrder?.[0], order: order + 1 });
-        } else {
-          orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-        }
-        recursColumn(order + 1);
+      if (!columnSameOrder?.length) return;
+      if (columnSameOrder.length > 1) {
+        orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
+        orderColumns.push({ ...columnSameOrder?.[0], order: order + 1 });
+      } else {
+        orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
       }
+      recursColumn(order + 1);
     };
     recursColumn(columns?.[0]?.order);
     return orderColumns;
+  };
+
+  const reOrderTask = (tasks: Task[] | undefined) => {
+     const columns = board?.columns
+          ?.sort((a, b) => a.order - b.order)
+          ?.map((col) => ({
+            ...col,
+            tasks: tasks?.filter((task) => task.columnId === col?.id),
+          }));
+    setBoard(old => (old?.id && columns) ? ({ ...old, columns }): undefined);
   };
 
   const handleFormClose = () => {
@@ -114,15 +114,12 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           ? { ...task, subtasks, columnId }
           : task
       );
-      const data = {
+      const body = {
         ...board,
         columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
         tasks,
       };
-      await fetch(`http://localhost:3333/boards/${board?.id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      });
+      await saveBoard(body);
       router.refresh();
     }
     handleFormClose();
@@ -133,13 +130,9 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     setWhatFormIs("ViewCard");
   };
 
-  const handleNewTask = () => {
-    setWhatFormIs("FormTask");
-  };
+  const handleNewTask = () => setWhatFormIs("FormTask");
 
-  const handleNewColumn = () => {
-    setWhatFormIs("FormColumn");
-  };
+  const handleNewColumn = () => setWhatFormIs("FormColumn");
 
   const onDropCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
     if (!destination || !draggableId) return;
@@ -149,11 +142,8 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         ? { ...task, columnId: destination.droppableId }
         : task
     );
-    await fetch(`http://localhost:3333/boards/${board?.id}`, {
-      method: "PATCH",
-      body: JSON.stringify({ tasks }),
-    });
-    router.refresh();
+    reOrderTask(tasks);
+    await patchBoard(tasks, board?.id);
   };
 
   return (
@@ -193,9 +183,10 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         <div className="p-4 flex flex-row">
           <DragDropContext onDragEnd={onDropCard}>
             {board?.columns?.map((column) => (
-              <Droppable key={column?.id} droppableId={column?.id}>
-                {(provided, _) => (
+              <Droppable key={column?.id} droppableId={column?.id} type="COLUMN">
+                {(provided) => (
                   <div
+                    key={column?.id}
                     className="flex flex-col justify-start mr-6"
                     ref={provided.innerRef}
                     {...provided.droppableProps}

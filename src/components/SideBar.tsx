@@ -18,7 +18,6 @@ interface SideBarProps {
 export const SideBar = ({ boards }: SideBarProps) => {
    const boardName = usePathname();
    const [openModal, setOpenModal] = useState<boolean>();
-   console.log(boardName);
    const [openSideBar, setOpenSideBar] = useState(!boardName.substring(1));
    const forString = () => boardName && boardName.substring(1).split('%20').join(' ');
 
