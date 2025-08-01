@@ -13,5 +13,6 @@
 * git clone https://github.com/franwanderley/kanbam.git
 * cd kanbam
 * npm install
+* criar .env seguindo o env.example
 * rodar o json-server: npm run db
 * npm run dev Pronto agora é só acessar http://localhost:3000/
