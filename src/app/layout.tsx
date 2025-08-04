@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SideBar } from "@/components/SideBar";
+import { getAllBoards } from "@/service/api";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,12 +16,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
   return (
     <html lang="pt-BR">
-      <body className={`${inter.className} md:min-h-screen md:min-w-full min-w-max overflow-x-scroll flex bg-bg-primary divide-x`}>
-        {getBoards().then(boards => (
+      <body
+        className={`${inter.className} md:min-h-screen md:min-w-full min-w-max md:overflow-x-hidden overflow-x-scroll flex bg-bg-primary divide-x`}
+      >
+        {getBoards().then((boards) => (
           <SideBar boards={boards} />
         ))}
         {children}
@@ -30,7 +31,5 @@ export default function RootLayout({
 }
 
 const getBoards = async () => {
-  const response = await fetch('http://localhost:3333/boards', { 'cache': 'no-store' });
-  const body = await response.json();
-  return body;
-}
+  return await getAllBoards();
+};
