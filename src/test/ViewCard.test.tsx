@@ -2,8 +2,7 @@ import {fireEvent, render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ViewCard } from '@/components/ViewCard';
 
-test('input has checked to the clicked', () => {
-   const ViewCardProps = {
+const ViewCardProps = {
       onClose: () => {},
       task: {
          id: '1',
@@ -17,6 +16,14 @@ test('input has checked to the clicked', () => {
       },
       columns: [{ id: 'column-1', title: 'To Do', color: '#f0f0f0', order: 1 }]
    };
+
+test('input has checked to iniatialize', () => {
+  render(<ViewCard { ...ViewCardProps } />);
+  const input = screen.getByLabelText('Subtask 2');
+  expect(input).toBeChecked();
+});
+
+test('input has checked to the clicked', () => {
   render(<ViewCard { ...ViewCardProps } />);
   const input = screen.getByLabelText('Subtask 1');
   fireEvent.click(input);

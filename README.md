@@ -5,6 +5,7 @@
 * NextJs 14
 * tailwind
 * typescript
+* Testing Library
 * json-server
 
 ### 💻 Usar no seu PC
