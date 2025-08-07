@@ -3,11 +3,11 @@
 import { Board } from "@/interface/Board";
 import { Task } from "@/interface/Task";
 
-interface OptionsRequest extends RequestInit {
+export interface OptionsRequest extends RequestInit {
    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS';
 }
 
-const apiFetch = async (endpoint: string, options: OptionsRequest) => {
+ export const apiFetch = async (endpoint: string, options: OptionsRequest) => {
   const url = `${process.env.REACT_APP_HOST}${endpoint}`;
   const headers = {
     'Content-Type': 'application/json',
@@ -63,6 +63,6 @@ export const patchBoard = async (tasks: Task[] | undefined, id: string | undefin
    });
  };
 
-const deleteData = async () => {
+export const deleteData = async () => {
   return apiFetch('/endpoint', { method: 'DELETE' });
 };

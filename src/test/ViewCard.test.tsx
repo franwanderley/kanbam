@@ -29,3 +29,9 @@ test('input has checked to the clicked', () => {
   fireEvent.click(input);
   expect(input).toBeChecked();
 });
+
+test('the value of select is the same as columnId', () => {
+   render(<ViewCard { ...ViewCardProps } />);
+   const select = screen.getByLabelText('Status');
+   expect(select).toHaveValue('column-1');
+});

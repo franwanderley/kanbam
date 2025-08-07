@@ -18,7 +18,7 @@ interface SideBarProps {
 export const SideBar = ({ boards }: SideBarProps) => {
    const boardName = usePathname();
    const [openModal, setOpenModal] = useState<boolean>();
-   const [openSideBar, setOpenSideBar] = useState(!boardName.substring(1));
+   const [openSideBar, setOpenSideBar] = useState(!boardName?.substring(1));
    const forString = () => boardName && boardName.substring(1).split('%20').join(' ');
 
    if(!openSideBar) {
@@ -31,7 +31,7 @@ export const SideBar = ({ boards }: SideBarProps) => {
    }
 
    return (
-      <div className="min-h-screen md:w-1/5 w-full flex flex-col p-4 bg-bg-secondary">
+      <aside className="min-h-screen md:w-1/5 w-full flex flex-col p-4 bg-bg-secondary">
          {openModal && <FormBoard onClose={() => setOpenModal(false)} />}
          <div className="flex flex-row mb-6">
             <Image className="w-6 mr-2" src={kanbam} alt="logo do kanbam"/>
@@ -61,6 +61,6 @@ export const SideBar = ({ boards }: SideBarProps) => {
             <Hide width="20px" height="15px" />
             <span onClick={() => setOpenSideBar(old => !old)} className="text-sm">Hide SideBar</span>
          </div>
-      </div>
+      </aside>
    );
 }
