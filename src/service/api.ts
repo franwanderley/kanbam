@@ -56,7 +56,6 @@ export const saveBoard = async (data: any) => {
 };
 
 export const patchBoard = async (tasks: Task[] | undefined, id: string | undefined) => {
-   if (!tasks || !id) return;
    return apiFetch(`/boards/${id}`, {
      method: 'PATCH',
      body: JSON.stringify({ tasks }),
