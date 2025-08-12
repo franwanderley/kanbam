@@ -72,6 +72,20 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       router.refresh();
   };
 
+  const deleteTask = async (taskId: string | undefined) => {
+    if (!board && taskId) return;
+
+    const tasks = board?.tasks?.filter((task) => task.id !== taskId);
+    const body = {
+      ...board,
+      columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
+      tasks,
+    };
+    await saveBoard(body);
+    handleFormClose();
+    router.refresh();
+  };
+
   const reOrderColumn = (columns: Column[]) => {
     const orderColumns: Column[] = [];
     const recursColumn = (order: number) => {
@@ -136,6 +150,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
 
   const onDropCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
     if (!destination || !draggableId) return;
+    console.log(destination);
 
     const tasks = board?.tasks?.map((task) =>
       task.id === draggableId
@@ -160,6 +175,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           columns={board?.columns}
           task={cardDetail}
           onClose={handleViewCardClose}
+          onDelete={deleteTask}
         />
       )}
       {whatFormIs === "FormColumn" && (

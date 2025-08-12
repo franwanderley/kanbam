@@ -34,7 +34,7 @@
           "id": "1",
           "title": "Create a platform for launching products",
           "description": "Design the platform's layout, structure, and user interface",
-          "columnId": "4",
+          "columnId": "2",
           "subtasks": [
             {
               "id": "1",
@@ -75,7 +75,7 @@
           "id": "3",
           "title": "Teste de criação de card",
           "description": "sdcasdasfcasfasdfASDFAS\nDFASDFAsdf",
-          "columnId": "3",
+          "columnId": "4",
           "subtasks": [
             {
               "title": "create layout",
@@ -91,7 +91,7 @@
           "id": "4",
           "title": "implements forgot your password",
           "description": "dfsdfsdgfsdgsdf",
-          "columnId": "2",
+          "columnId": "1",
           "subtasks": [
             {
               "title": "create layout",
@@ -107,7 +107,7 @@
           "id": "5",
           "title": "create page perfil for user",
           "description": "create page perfil for user, create page perfil for user, create page perfil for user",
-          "columnId": "4",
+          "columnId": "3",
           "subtasks": [
             {
               "title": "create page",
@@ -126,7 +126,7 @@
         {
           "title": "Usar a api do mercado pago",
           "description": "integrar em nossos sistema o mercado pago para pagamento de cartão de credito, boleto e pix.",
-          "columnId": "4",
+          "columnId": "3",
           "id": "08b4678d-8999-4ae8-a33e-65d735b31d91",
           "subtasks": [
             {
