@@ -150,7 +150,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
 
   const onDropCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
     if (!destination || !draggableId) return;
-    console.log(destination);
 
     const tasks = board?.tasks?.map((task) =>
       task.id === draggableId
@@ -159,6 +158,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     );
     reOrderTask(tasks);
     await patchBoard(tasks, board?.id);
+    router.refresh();
   };
 
   return (
@@ -190,7 +190,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
           <h2 className="text-2xl">{board?.title}</h2>
           <button
-            onClick={handleNewTask}
+            onClick={handleNewTask}           
             className="cursor-pointer text-xs bg-button p-2 rounded-2xl"
           >
             + Add New Task

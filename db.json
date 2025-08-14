@@ -91,7 +91,7 @@
           "id": "4",
           "title": "implements forgot your password",
           "description": "dfsdfsdgfsdgsdf",
-          "columnId": "1",
+          "columnId": "2",
           "subtasks": [
             {
               "title": "create layout",
@@ -126,7 +126,7 @@
         {
           "title": "Usar a api do mercado pago",
           "description": "integrar em nossos sistema o mercado pago para pagamento de cartão de credito, boleto e pix.",
-          "columnId": "3",
+          "columnId": "4",
           "id": "08b4678d-8999-4ae8-a33e-65d735b31d91",
           "subtasks": [
             {
