@@ -72,6 +72,20 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       router.refresh();
   };
 
+  const deleteTask = async (taskId: string | undefined) => {
+    if (!board && taskId) return;
+
+    const tasks = board?.tasks?.filter((task) => task.id !== taskId);
+    const body = {
+      ...board,
+      columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
+      tasks,
+    };
+    await saveBoard(body);
+    handleFormClose();
+    router.refresh();
+  };
+
   const reOrderColumn = (columns: Column[]) => {
     const orderColumns: Column[] = [];
     const recursColumn = (order: number) => {
@@ -144,6 +158,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     );
     reOrderTask(tasks);
     await patchBoard(tasks, board?.id);
+    router.refresh();
   };
 
   return (
@@ -160,6 +175,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           columns={board?.columns}
           task={cardDetail}
           onClose={handleViewCardClose}
+          onDelete={deleteTask}
         />
       )}
       {whatFormIs === "FormColumn" && (
@@ -174,7 +190,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
           <h2 className="text-2xl">{board?.title}</h2>
           <button
-            onClick={handleNewTask}
+            onClick={handleNewTask}           
             className="cursor-pointer text-xs bg-button p-2 rounded-2xl"
           >
             + Add New Task
