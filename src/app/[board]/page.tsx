@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/Card";
 import { FormTask } from "@/components/FormTask";
@@ -20,9 +19,7 @@ import { getBoardByTitle, patchBoard, saveBoard } from "@/service/api";
 
 export default function BoardPage({ params }: { params: { board: string } }) {
   const router = useRouter();
-  const [whatFormIs, setWhatFormIs] = useState<
-    "FormTask" | "ViewCard" | "FormColumn"
-  >();
+  const [whatFormIs, setWhatFormIs] = useState<"FormTask" | "ViewCard" | "FormColumn">();
   const [cardDetail, setCardDetail] = useState<Task>();
   const [board, setBoard] = useState<Board>();
 
@@ -30,7 +27,8 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     const getBoard = async () => {
       const data = await getBoardByTitle(params.board);
       if (!data || data?.length === 0) {
-        throw new Error('no board found');
+        router.push("/not-found");
+        return;
       }
       const columns = data?.[0]?.columns
         ?.sort((a, b) => a.order - b.order)
@@ -60,7 +58,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     if (!data || !board) return;
 
     const columns = board?.columns?.length
-        ? [...board?.columns, data].sort((a, b) => a.order - b.order)
+        ? [data, ...board?.columns]
         : [data];
       const body = {
         ...board,
@@ -86,7 +84,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     router.refresh();
   };
 
-  const reOrderColumn = (columns: Column[]) => {
+  const reOrderColumn2 = (columns: Column[]) => {
     const orderColumns: Column[] = [];
     const recursColumn = (order: number) => {
       const columnSameOrder = columns?.filter((col) => col?.order === order);
@@ -101,6 +99,26 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     };
     recursColumn(columns?.[0]?.order);
     return orderColumns;
+  };
+
+  const reOrderColumn = (columns: Column[]): Column[] => {
+    if (!columns || columns.length === 0) {
+      return [];
+    }
+    const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
+
+    return sortedColumns.reduce((acc: Column[], currentColumn) => {
+      if (acc.length === 0) {
+        return [currentColumn];
+      }
+      const lastColumn = acc.at(-1);
+      if (lastColumn && currentColumn.order <= lastColumn.order) {
+        acc.push({ ...currentColumn, order: lastColumn.order + 1 });
+      } else {
+        acc.push(currentColumn);
+      }
+      return acc;
+    }, []);
   };
 
   const reOrderTask = (tasks: Task[] | undefined) => {

@@ -10,7 +10,8 @@ interface FormColumnProps {
 
 export const FormColumn = ({ columns, onClose, saveColumn }: FormColumnProps) => {
    const { register, handleSubmit } = useForm<Column>();
-   const lastOrder = columns?.[columns?.length - 1]?.order || 0;
+   const lastOrder = columns?.at(-1)?.order || 0;
+
    const onSubmit = (data: Column) => {
       saveColumn({...data, order: Number(data?.order), id: crypto.randomUUID(), title: data?.title?.toUpperCase()});
       onClose();
@@ -28,10 +29,10 @@ export const FormColumn = ({ columns, onClose, saveColumn }: FormColumnProps) =>
                   type="text"
                   {...register("title", { required: true })}
                   id="title" 
-                  placeholder="Take coffree break" 
+                  placeholder="ex: Doing" 
                   required
                />
-               <label htmlFor="title">Color</label>
+               <label htmlFor="color">Color</label>
                <input 
                   className="bg-transparent w-full border border-border mt-2 mb-2" 
                   type="color"
