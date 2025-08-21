@@ -84,22 +84,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     router.refresh();
   };
 
-  const reOrderColumn2 = (columns: Column[]) => {
-    const orderColumns: Column[] = [];
-    const recursColumn = (order: number) => {
-      const columnSameOrder = columns?.filter((col) => col?.order === order);
-      if (!columnSameOrder?.length) return;
-      if (columnSameOrder.length > 1) {
-        orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-        orderColumns.push({ ...columnSameOrder?.[0], order: order + 1 });
-      } else {
-        orderColumns.push(columnSameOrder?.[columnSameOrder?.length - 1]);
-      }
-      recursColumn(order + 1);
-    };
-    recursColumn(columns?.[0]?.order);
-    return orderColumns;
-  };
 
   const reOrderColumn = (columns: Column[]): Column[] => {
     if (!columns || columns.length === 0) {
