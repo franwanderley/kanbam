@@ -185,16 +185,34 @@
       "title": "Teste 2",
       "columns": [
         {
+          "title": "IN ANALIZING",
+          "color": "#e7dbc6",
+          "order": 2,
+          "id": "ffc5af42-8e38-463b-93c4-7df65c0d779e"
+        },
+        {
           "title": "TODO",
           "color": "#404d8c",
-          "order": 1,
+          "order": 3,
           "id": "e9ca45ef-3c3c-4c38-922a-f7de490ddb98"
+        },
+        {
+          "title": "PRE-DOING",
+          "color": "#c47878",
+          "order": 4,
+          "id": "e2a2957e-568c-45bc-8770-6950a2623380"
         },
         {
           "title": "DOING",
           "color": "#151751",
-          "order": 2,
+          "order": 5,
           "id": "de04d0f1-7be9-43c7-9a6b-4f33a2ccd6f4"
+        },
+        {
+          "title": "TESTING",
+          "color": "#c45236",
+          "order": 6,
+          "id": "9f6eff7e-e66c-4eaa-b0ea-a73493f4bf78"
         }
       ],
       "tasks": [
