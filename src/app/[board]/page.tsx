@@ -19,7 +19,7 @@ import { getBoardByTitle, patchBoard, saveBoard } from "@/service/api";
 
 export default function BoardPage({ params }: { params: { board: string } }) {
   const router = useRouter();
-  const [whatFormIs, setWhatFormIs] = useState<"FormTask" | "ViewCard" | "FormColumn">();
+  const [witchModalIsOpen, setWitchModalIsOpen] = useState<"FormTask" | "ViewCard" | "FormColumn">();
   const [cardDetail, setCardDetail] = useState<Task>();
   const [board, setBoard] = useState<Board>();
 
@@ -116,7 +116,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
   };
 
   const handleFormClose = () => {
-    setWhatFormIs(undefined);
+    setWitchModalIsOpen(undefined);
     setCardDetail(undefined);
   };
 
@@ -143,12 +143,12 @@ export default function BoardPage({ params }: { params: { board: string } }) {
 
   const handleCardDetail = (card: Task) => {
     setCardDetail(card);
-    setWhatFormIs("ViewCard");
+    setWitchModalIsOpen("ViewCard");
   };
 
-  const handleNewTask = () => setWhatFormIs("FormTask");
+  const handleNewTask = () => setWitchModalIsOpen("FormTask");
 
-  const handleNewColumn = () => setWhatFormIs("FormColumn");
+  const handleNewColumn = () => setWitchModalIsOpen("FormColumn");
 
   const onDropCard = async ({ destination, draggableId }: DropResult, _: ResponderProvided) => {
     if (!destination || !draggableId) return;
@@ -165,14 +165,14 @@ export default function BoardPage({ params }: { params: { board: string } }) {
 
   return (
     <div className="flex md:min-h-screen w-full flex-row bg-bg-primary">
-      {whatFormIs === "FormTask" && (
+      {witchModalIsOpen === "FormTask" && (
         <FormTask
           columns={board?.columns}
           saveTask={saveTask}
           onClose={handleFormClose}
         />
       )}
-      {whatFormIs === "ViewCard" && (
+      {witchModalIsOpen === "ViewCard" && (
         <ViewCard
           columns={board?.columns}
           task={cardDetail}
@@ -180,7 +180,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
           onDelete={deleteTask}
         />
       )}
-      {whatFormIs === "FormColumn" && (
+      {witchModalIsOpen === "FormColumn" && (
         <FormColumn
           columns={board?.columns}
           saveColumn={saveColumn}

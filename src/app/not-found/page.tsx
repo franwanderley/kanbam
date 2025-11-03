@@ -8,7 +8,7 @@ export default function NotFound () {
     return (
       <div className="flex flex-col items-center w-full">
         <header className="flex flex-row justify-between p-4 w-full bg-bg-secondary">
-          <h2 className="text-2xl">Platform Launch</h2>
+          <h2 className="text-2xl">Not Found</h2>
           <button disabled className="cursor-pointer text-xs bg-gray-500 p-2 rounded-2xl">
             + Add New Task
           </button>
@@ -21,7 +21,7 @@ export default function NotFound () {
            autoplay
         />
         <h1>
-          Pagina não encontrado! 
+          Page Not Found! 
           <Link href="/" className="cursor-pointer text-center font-bold ml-1 text-button">
             Voltar ao Inicio
           </Link>
