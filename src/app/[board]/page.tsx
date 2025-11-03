@@ -195,7 +195,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
                         className={`mb-4 p-2 rounded-full mr-2`}
                       />
                       <span className="text-gray-400 text-xs">
-                        {column?.title} ({column?.tasks?.length || 0})
+                        {column?.title} ({board.tasks?.filter(task => task.columnId === column?.id).length || 0})
                       </span>
                     </div>
                     {board.tasks?.filter(task => task.columnId === column?.id)?.map((task) => (
