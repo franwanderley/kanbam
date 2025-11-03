@@ -15,15 +15,15 @@ interface ViewCardProps {
 export const ViewCard = ({ onClose, task, columns, onDelete } : ViewCardProps) => {
    const howSubTaskIsFinish = () => task?.subtasks?.filter(sub => sub?.isFinish)?.length;
    const [subtasks, setSubtasks] = useState(task?.subtasks);
-   const [columnId, setColumnId] = useState(task?.columnId);
+   const [selectedColumnId, setSelectedColumnId] = useState(task?.columnId);
 
    return (
       <div className="fixed inset-0 flex items-center justify-center z-50">
-         <div className="fixed inset-0 bg-black opacity-50" onClick={() => onClose(subtasks, columnId)}></div>
+         <div className="fixed inset-0 bg-black opacity-50" onClick={() => onClose(subtasks, selectedColumnId)}></div>
          <div className="bg-bg-secondary rounded-lg overflow-hidden shadow-lg z-10 m-4 max-h-md max-w-md p-4 min-w-96">
             <div className="flex flex-row justify-between mb-4 h-6">
                <h3 className="font-bold">{task?.title}</h3>
-               <span className="cursor-pointer p-1 w-10 h-8 align-middle" onClick={() => onDelete(task?.id)}>
+               <span className="cursor-pointer w-6 h-6 align-top" onClick={() => onDelete(task?.id)}>
                   <Trash />
                </span>
             </div>
@@ -43,10 +43,10 @@ export const ViewCard = ({ onClose, task, columns, onDelete } : ViewCardProps) =
             ))}
             <label htmlFor="status" className="mt-3">Status</label>
             <select 
-               value={columnId} 
+               value={selectedColumnId} 
                className="p-2 w-full bg-transparent text-gray-400 border border-border mt-2 mb-2" 
                id="status"
-               onChange={({target}) => setColumnId(target?.value)}
+               onChange={({target}) => setSelectedColumnId(target?.value)}
             >
                {columns?.map(col => (
                   <option key={col?.id} value={col?.id}>{col?.title}</option>

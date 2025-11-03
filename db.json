@@ -34,7 +34,7 @@
           "id": "1",
           "title": "Create a platform for launching products",
           "description": "Design the platform's layout, structure, and user interface",
-          "columnId": "2",
+          "columnId": "4",
           "subtasks": [
             {
               "id": "1",
@@ -75,7 +75,7 @@
           "id": "3",
           "title": "Teste de criação de card",
           "description": "sdcasdasfcasfasdfASDFAS\nDFASDFAsdf",
-          "columnId": "4",
+          "columnId": "2",
           "subtasks": [
             {
               "title": "create layout",
@@ -91,7 +91,7 @@
           "id": "4",
           "title": "implements forgot your password",
           "description": "dfsdfsdgfsdgsdf",
-          "columnId": "2",
+          "columnId": "1",
           "subtasks": [
             {
               "title": "create layout",
@@ -126,7 +126,7 @@
         {
           "title": "Usar a api do mercado pago",
           "description": "integrar em nossos sistema o mercado pago para pagamento de cartão de credito, boleto e pix.",
-          "columnId": "4",
+          "columnId": "2",
           "id": "08b4678d-8999-4ae8-a33e-65d735b31d91",
           "subtasks": [
             {
@@ -219,7 +219,7 @@
         {
           "title": "Teste 2 criando card",
           "description": "Adorar e evangelizar",
-          "columnId": "e9ca45ef-3c3c-4c38-922a-f7de490ddb98",
+          "columnId": "9f6eff7e-e66c-4eaa-b0ea-a73493f4bf78",
           "id": "2d8a7662-b8ef-4768-ad9e-b5b7962d796a",
           "subtasks": [
             {
