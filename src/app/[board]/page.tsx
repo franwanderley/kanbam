@@ -28,7 +28,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       const data = await getBoardByTitle(params.board);
       if (!data || data?.length === 0) {
         router.push("/not-found");
-        return;
       }
       const sortedColumns = data?.[0]?.columns?.sort((a, b) => a.order - b.order);
       setBoard({ ...data?.[0], columns: sortedColumns });
@@ -79,7 +78,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     if (!columns || columns.length === 0) {
       return [];
     }
-    const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
+    const sortedColumns = columns.sort((a, b) => a.order - b.order);
 
     return sortedColumns.reduce((acc: Column[], currentColumn) => {
       if (acc.length === 0) {
@@ -94,7 +93,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       return acc;
     }, []);
   };
-
 
   const handleFormClose = () => {
     setWitchModalIsOpen(undefined);
