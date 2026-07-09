@@ -1,7 +1,6 @@
-'use server'
 import React from 'react';
 
-export default async function Home() {
+export default function Home() {
 
   return (
     <div className="flex h-screen w-screen flex-row bg-bg-primary">

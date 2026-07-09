@@ -1,123 +1,113 @@
-import { apiFetch, OptionsRequest } from "../service/api";
+import { getAllBoards, createBoard, saveBoard, patchBoard } from "../service/api";
+import { supabase } from "../service/supabase";
 
-let consoleErrorSpy: jest.SpyInstance;
+jest.mock("../service/supabase", () => ({
+  supabase: {
+    from: jest.fn()
+  }
+}));
 
-beforeEach(() => {
-  global.fetch = jest.fn() as jest.Mock<any, any>;
-  (process.env as NodeJS.ProcessEnv).REACT_APP_HOST = "http://localhost:3333";
-  consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-});
+describe("Supabase API Service", () => {
+  let consoleErrorSpy: jest.SpyInstance;
 
-afterEach(() => {
-  jest.restoreAllMocks();
-  delete (process.env as NodeJS.ProcessEnv).REACT_APP_HOST;
-});
-
-describe("apiFetch", () => {
-  test("should return data in JSON on success", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ data: "Sucess!" }),
-    } as Response);
-
-    const endpoint: string = "/boards";
-    const options: OptionsRequest = { method: "GET" };
-    const result = await apiFetch(endpoint, options);
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      "http://localhost:3333/boards",
-      expect.objectContaining({
-        method: "GET",
-        cache: "no-cache",
-        headers: { "Content-Type": "application/json" },
-      })
-    );
-    expect(result).toEqual({ data: "Sucess!" });
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  test("should throw an error with the API message on HTTP failure", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      status: 404,
-      json: () => Promise.resolve({ message: "not found" }),
-    } as Response);
-
-    const endpoint: string = "/not-found";
-    const options: OptionsRequest = { method: "GET" };
-
-    await expect(apiFetch(endpoint, options)).rejects.toThrow(
-      "not found"
-    );
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "API request failed:",
-      expect.any(Error)
-    );
+  afterEach(() => {
+    consoleErrorSpy.mockRestore();
   });
 
-  test("should throw an error without message JSON on HTTP failure", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-      json: () => Promise.reject(new Error("error reading JSON")),
-    } as Response);
+  describe("getAllBoards", () => {
+    test("should fetch boards successfully when they exist", async () => {
+      const mockBoards = [{ id: "1", title: "Board 1", columns: [], tasks: [] }];
+      
+      const mockFrom = supabase.from as jest.Mock;
+      const mockSelect = jest.fn().mockResolvedValue({ data: mockBoards, error: null });
+      mockFrom.mockReturnValue({ select: mockSelect });
 
-    const endpoint: string = "/error-server";
-    const options: OptionsRequest = { method: "POST" };
+      const result = await getAllBoards();
+      expect(result).toEqual(mockBoards);
+    });
 
-    await expect(apiFetch(endpoint, options)).rejects.toThrow(
-      "HTTP error! status: 500"
-    );
+    test("should seed initial boards and return them if table is empty", async () => {
+      const mockFrom = supabase.from as jest.Mock;
+      
+      // First call returns empty data
+      const mockSelect = jest.fn().mockResolvedValue({ data: [], error: null });
+      // Insert mock
+      const mockInsert = jest.fn().mockResolvedValue({ error: null });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "API request failed:",
-      expect.any(Error)
-    );
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'boards') {
+          return {
+            select: mockSelect,
+            insert: mockInsert
+          };
+        }
+        return {};
+      });
+
+      const result = await getAllBoards();
+      expect(mockInsert).toHaveBeenCalled();
+      expect(result.length).toBeGreaterThan(0);
+    });
   });
 
-  test("should rethrow the original error in case of network failure", async () => {
-    const networkError: TypeError = new TypeError("Failed to fetch");
-    (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+  describe("createBoard", () => {
+    test("should insert a new board and return it", async () => {
+      const newBoardTitle = "New Board";
+      const mockFrom = supabase.from as jest.Mock;
+      
+      const mockSelect = jest.fn().mockResolvedValue({
+        data: [{ id: "new-id", title: newBoardTitle, columns: [], tasks: [] }],
+        error: null
+      });
+      const mockInsert = jest.fn().mockReturnValue({ select: mockSelect });
 
-    const endpoint: string = "/offline";
-    const options: OptionsRequest = { method: "GET" };
+      mockFrom.mockReturnValue({ insert: mockInsert });
 
-    await expect(apiFetch(endpoint, options)).rejects.toThrow(networkError);
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      "API request failed:",
-      networkError
-    );
+      const result = await createBoard({ title: newBoardTitle });
+      expect(result.title).toBe(newBoardTitle);
+    });
   });
 
-  test("deve mesclar headers personalizados com Content-Type", async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ success: true }),
-    } as Response);
+  describe("saveBoard", () => {
+    test("should update board and return updated value", async () => {
+      const boardToUpdate = { id: "1", title: "Updated Board", columns: [], tasks: [] };
+      const mockFrom = supabase.from as jest.Mock;
 
-    const endpoint: string = "/data";
-    const options: OptionsRequest = {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer token123",
-        "X-Custom-Header": "value",
-      },
-      body: JSON.stringify({ item: "new" }),
-    };
+      const mockSelect = jest.fn().mockResolvedValue({
+        data: [boardToUpdate],
+        error: null
+      });
+      const mockEq = jest.fn().mockReturnValue({ select: mockSelect });
+      const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
 
-    await apiFetch(endpoint, options);
+      mockFrom.mockReturnValue({ update: mockUpdate });
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer token123",
-          "X-Custom-Header": "value",
-        },
-      })
-    );
+      const result = await saveBoard(boardToUpdate);
+      expect(result).toEqual(boardToUpdate);
+    });
+  });
+
+  describe("patchBoard", () => {
+    test("should update tasks of a specific board", async () => {
+      const tasks = [{ id: "t1", title: "Task 1", description: "", subtasks: [], columnId: "c1" }];
+      const mockFrom = supabase.from as jest.Mock;
+
+      const mockSelect = jest.fn().mockResolvedValue({
+        data: [{ id: "1", tasks }],
+        error: null
+      });
+      const mockEq = jest.fn().mockReturnValue({ select: mockSelect });
+      const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
+
+      mockFrom.mockReturnValue({ update: mockUpdate });
+
+      const result = await patchBoard(tasks, "1");
+      expect(result?.tasks).toEqual(tasks);
+    });
   });
 });
