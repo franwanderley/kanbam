@@ -30,13 +30,8 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         router.push("/not-found");
         return;
       }
-      const columns = data?.[0]?.columns
-        ?.sort((a, b) => a.order - b.order)
-        ?.map((col) => ({
-          ...col,
-          tasks: data?.[0].tasks?.filter((task) => task.columnId === col?.id),
-        }));
-      setBoard({ ...data?.[0], columns });
+      const sortedColumns = data?.[0]?.columns?.sort((a, b) => a.order - b.order);
+      setBoard({ ...data?.[0], columns: sortedColumns });
     };
 
     getBoard();
@@ -46,7 +41,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     if (data && board) {
       const body = {
         ...board,
-        columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
         tasks: board?.tasks ? [...board.tasks, data] : [data],
       };
       await saveBoard(body);
@@ -57,14 +51,12 @@ export default function BoardPage({ params }: { params: { board: string } }) {
   const saveColumn = async (data?: Column) => {
     if (!data || !board) return;
 
-    const columns = board?.columns?.length
+    const newWithOldsColumns = board?.columns?.length
         ? [data, ...board?.columns]
         : [data];
       const body = {
         ...board,
-        columns: reOrderColumn(
-          columns?.map((col) => ({ ...col, tasks: undefined }))
-        ),
+        columns: reOrderColumn(newWithOldsColumns),
       };
       await saveBoard(body);
       router.refresh();
@@ -76,14 +68,12 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     const tasks = board?.tasks?.filter((task) => task.id !== taskId);
     const body = {
       ...board,
-      columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
       tasks,
     };
     await saveBoard(body);
     handleFormClose();
     router.refresh();
   };
-
 
   const reOrderColumn = (columns: Column[]): Column[] => {
     if (!columns || columns.length === 0) {
@@ -105,15 +95,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
     }, []);
   };
 
-  const reOrderTask = (tasks: Task[] | undefined) => {
-     const columns = board?.columns
-          ?.sort((a, b) => a.order - b.order)
-          ?.map((col) => ({
-            ...col,
-            tasks: tasks?.filter((task) => task.columnId === col?.id),
-          }));
-    setBoard(old => (old?.id && columns) ? ({ ...old, columns }): undefined);
-  };
 
   const handleFormClose = () => {
     setWitchModalIsOpen(undefined);
@@ -132,7 +113,6 @@ export default function BoardPage({ params }: { params: { board: string } }) {
       );
       const body = {
         ...board,
-        columns: board?.columns?.map((col) => ({ ...col, tasks: undefined })),
         tasks,
       };
       await saveBoard(body);
@@ -158,7 +138,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
         ? { ...task, columnId: destination.droppableId }
         : task
     );
-    reOrderTask(tasks);
+    setBoard(old => old?.id && tasks ? ({...old, tasks}): undefined);
     await patchBoard(tasks, board?.id);
     router.refresh();
   };
@@ -218,7 +198,7 @@ export default function BoardPage({ params }: { params: { board: string } }) {
                         {column?.title} ({column?.tasks?.length || 0})
                       </span>
                     </div>
-                    {column?.tasks?.map((task) => (
+                    {board.tasks?.filter(task => task.columnId === column?.id)?.map((task) => (
                       <Card
                         key={task?.id}
                         task={task}
